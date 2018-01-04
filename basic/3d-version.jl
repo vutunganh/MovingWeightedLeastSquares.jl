@@ -42,3 +42,20 @@ end
 function radial_distance(p::Point)
   return dist(p, Point(0,0,0))
 end
+
+# Generates the polynomial basis
+# This should be much simpler in the N-dimensional case
+function gen_base()
+  return (
+    1,
+    (p::Point -> p.x),
+    (p::Point -> p.y),
+    (p::Point -> p.x ^ 2),
+    (p::Point -> p.x * p.y),
+    (p::Point -> p.y ^ 2)
+  )
+end
+
+function wls(points, weighting_function)
+end
+
