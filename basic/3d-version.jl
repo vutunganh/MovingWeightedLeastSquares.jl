@@ -56,6 +56,11 @@ function gen_base()
   )
 end
 
+# Sample weighting function
+function w1(d::Float64) where {EPS}
+  1 / (d ^ 2 + EPS ^ 2)
+end
+
 function wls(points, weighting_function)
 end
 
