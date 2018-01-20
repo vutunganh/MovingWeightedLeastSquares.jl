@@ -1,6 +1,8 @@
 # Weighted least squares in 3D space.
 # Approximation will be done with polynomials.
 # Assume that approximated function will be in form f: R^2 -> R
+# The primary purpose of this program is to find all mistakes, that will
+# happen in the real program.
 
 import Base.+
 import Base.-
@@ -45,6 +47,8 @@ end
 
 # Generates the polynomial basis
 # This should be much simpler in the N-dimensional case
+# dimensions will be indexed by a number
+# such as x -> 0, y -> 1, ...
 function gen_base()
   return (
     1,
@@ -61,6 +65,7 @@ function w1(d::Float64) where {EPS}
   1 / (d ^ 2 + EPS ^ 2)
 end
 
-function wls(points, weighting_function)
+function wls(approx_point::Point, points, weighting_function)
+  prin
 end
 
