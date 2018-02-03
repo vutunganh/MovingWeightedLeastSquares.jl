@@ -2,12 +2,15 @@
 # Approximation will be done with polynomials.
 # Assume that approximated function will be in form f: R^2 -> R
 # The primary purpose of this program is to find all mistakes, that will
-# happen in the real program.
+# happen in the real program and solve them early.
 
 pointsStr = "points"
 
 import Base: +, -, *, /
 import JSON
+using DynamicPolynomials
+using MultivariatePolynomials
+using Base.Random
 
 "A geometrical point structure."
 struct Point
@@ -41,25 +44,42 @@ function dist(p::Point, q::Point)
   return sqrt((p.x - q.x) ^ 2 + (p.y - q.y) ^ 2 + (p.z - q.z) ^ 2)
 end
 
+"Calculates the Euclidean distance of a point from (0, 0, 0)"
 function radial_distance(p::Point)
   return dist(p, Point(0,0,0))
 end
 
+"Uniformly generates a random number from a to b (b noninclusive)"
+function randUniform(a = -100, b = 100)
+  a + rand() * (b - a)
+end
+
 """
-Generates the polynomial basis
-This should be much simpler in the N-dimensional case
-dimensions will be indexed by a number
-such as x -> 0, y -> 1, ...
+Generates a random polynomial
+TODO: how to make this parametrizable by max degree, 
+e.g. generatePolynomial(3) -> x^1, x^2, x^3?
+btw `@ polyvar a[1:n]` works
 """
-function gen_base()
-  return (
-          1,
-          (p::Point -> p.x),
-          (p::Point -> p.y),
-          (p::Point -> p.x ^ 2),
-          (p::Point -> p.x * p.y),
-          (p::Point -> p.y ^ 2)
- )
+function generatePolynomial()
+  coefficients = [randUniform() for i in 1:6]
+  @polyvar x y
+  polynomial([1, x, y, x^2, x*y, y^2], coefficients)
+end
+
+"Generates x and y coordinates randomly"
+function generateInput()
+  Point(randUniform(), randUniform(), 0)
+end
+
+"Generates a `n` random points without outputs"
+function generatePoints(n::Int64)
+  [generateInput() for i in 1:n]
+end
+
+"Calculates outputs for generated points"
+function calculateOutputs(points, polynomial)
+  for p in points
+    p.z = polynomial(x => p.x, y => p.y)
 end
 
 "An example weighting function"
@@ -71,10 +91,9 @@ function wls(approx_point::Point, points, weighting_function)
 end
 
 function program()
-  print(ARGS)
   rawInput = JSON.parsefile(ARGS[1])
   points = rawInput[pointsStr]
-
+  println(generatePoint(5))
 end
 
 if length(ARGS) == 1
