@@ -11,6 +11,7 @@ import JSON
 using DynamicPolynomials
 using MultivariatePolynomials
 using Base.Random
+using ArgParse
 
 "A geometrical point structure."
 struct Point
@@ -71,7 +72,7 @@ function generateInput()
   Point(randUniform(), randUniform(), 0)
 end
 
-"Generates a `n` random points without outputs"
+"Generates `n` random points without outputs"
 function generatePoints(n::Int64)
   [generateInput() for i in 1:n]
 end
@@ -91,6 +92,12 @@ function wls(approx_point::Point, points, weighting_function)
 end
 
 function program()
+  s = ArgParseSettings()
+  @add_arg_table s begin
+    "--generate-data"
+      help = "Generates sample points"
+    arg_type
+  end
   rawInput = JSON.parsefile(ARGS[1])
   points = rawInput[pointsStr]
   println(generatePoint(5))
