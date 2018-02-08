@@ -71,7 +71,7 @@ function main()
   else
     outputStream = open(options["output"], "w")
   end
-  write(outputStream, jsonOutput)
+  print(outputStream, jsonOutput)
   close(outputStream)
 end
 
