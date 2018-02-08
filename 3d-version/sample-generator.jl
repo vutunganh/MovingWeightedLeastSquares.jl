@@ -1,7 +1,7 @@
 include("point.jl")
 
-import DynamicPolynomials.@polyvar
-import MultivariatePolynomials.polynomial
+using DynamicPolynomials
+using MultivariatePolynomials
 using Base.Random
 using ArgParse
 using JSON
@@ -21,9 +21,8 @@ e.g. generatePolynomial(3) -> x^1, x^2, x^3, x^2*y, x*y^2,...?
 btw `@polyvar a[1:n]` works
 """
 function generatePolynomial()
-  coefficients = [randUniform(-100.0, 100.0) for i in 1:2]
-  @polyvar x y
-  return MultivariatePolynomials.polynomial([x, y], coefficients)
+  coefficients = [randUniform(-100.0, 100.0) for i in 1:6]
+  return MultivariatePolynomials.polynomial([1, x, y, x^2, x*y, y^2], coefficients)
 end
 
 "Generates x and y coordinates randomly"
@@ -36,10 +35,9 @@ function generatePoints(n::Int64)
   return [generateSinglePoint() for i in 1:n]
 end
 
+"Evaluates the polynomial `pol` at `p` "
 function calcOutput(p, pol)
-  tmp = pol(x => p.x, y => p.y)
-  println(tmp)
-  return tmp
+  return pol(x => p.x, y => p.y)
 end
 
 function parseCommandline()
@@ -51,7 +49,6 @@ function parseCommandline()
     "-o", "--output"
       help = "output file for generated points"
       arg_type = String
-      default = "STDOUT"
   end
 
   return parse_args(s)
@@ -61,16 +58,21 @@ function main()
   options = parseCommandline()
 
   randomPolynomial = generatePolynomial()
-  println(randomPolynomial)
-  println(randomPolynomial(x=>1.0, y=>0))
   randomPoints = generatePoints(options["amount"])
-  println(randomPoints)
-  calcOutput.(randomPoints, randomPolynomial)
-  #= toOutput = Dict("polynomial" => randomPolynomial, =#
-  #=                 "points" => randomPoints) =#
-  #= jsonOutput = json(toOutput) =#
-  #= outputStream = open(options["output"], "w") =#
-  #= write(outputStream, jsonOutput) =#
+  for p in randomPoints
+    p.z = calcOutput(p, randomPolynomial)
+  end
+
+  toOutput = Dict("polynomial" => randomPolynomial,
+                  "points" => randomPoints)
+  jsonOutput = json(toOutput)
+  if options["output"] == nothing
+    outputStream = STDOUT
+  else
+    outputStream = open(options["output"], "w")
+  end
+  write(outputStream, jsonOutput)
+  close(outputStream)
 end
 
 main()
