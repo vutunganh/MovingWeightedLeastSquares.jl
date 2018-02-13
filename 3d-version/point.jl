@@ -1,8 +1,9 @@
 module Point3D
 
 import Base: +, -, *, /
+import JSON.lower
 
-export Point, +, -, *, /, dist, radial_distance
+export Point, +, -, *, /, dist, radial_distance, lower
 
 "A geometrical point structure."
 mutable struct Point
@@ -39,6 +40,11 @@ end
 "Calculates the Euclidean distance of a point from (0, 0, 0)"
 function radial_distance(p::Point)
   return dist(p, Point(0,0,0))
+end
+
+"Point JSON serialization"
+function lower(p::Point)
+  return [p.x, p.y, p.z]
 end
 
 end
