@@ -40,6 +40,13 @@ function calcOutput(p, pol)
   return pol(x => p.x, y => p.y)
 end
 
+function lower(p::AbstractPolynomial)
+  res = dict("variables" => variables(p)
+             "coefficients" => coefficients(p)
+             "monomials" => monomials(p)
+            )
+end
+
 function parseCommandline()
   s = ArgParseSettings()
   @add_arg_table s begin
