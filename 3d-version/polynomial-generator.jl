@@ -1,34 +1,41 @@
+module PolynomialGenerator
+
 import DynamicPolynomials
 import MultivariatePolynomials
 
-function gen(variables, maxDegree::Int64)
+"""
+Generates a random polynomial
+@variableCount - x_1, x_2, ..., x_variableCount
+@maxDegree - max degree of all terms
+returns the polynomial variables and the polynomial itself
+
+note that the amount of variables is given by C(variableCount + maxDegree, variableCount), so don't overdo it
+"""
+function gen(variableCount, maxDegree::Int64)
   toReturn = []
+  variables = DynamicPolynomials.@polyvar x[1:variableCount]
   for v in variables
     for d in 1:maxDegree
       push!(toReturn, v^d)
     end
   end
   for v in variables
-    println("done: $toReturn")
     for done in toReturn
       if MultivariatePolynomials.nvariables(done) == 1 && MultivariatePolynomials.variables(done)[1] == v
         continue
       end
-      println("doing $done, var $v")
       for d in 1:maxDegree
         tmp = done * (v^d)
         if MultivariatePolynomials.degree(tmp) > maxDegree
           break
         else
-          println("pushing $tmp")
           push!(toReturn, tmp)
         end
       end
     end
   end
-  return toReturn
+  return variables, toReturn
 end
 
-DynamicPolynomials.@polyvar x[1:3]
-println(gen(x[1:3], 4))
+end
 

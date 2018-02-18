@@ -14,12 +14,7 @@ function randUniform(a, b)
   return a + rand() * (b - a)
 end
 
-"""
-Generates a random polynomial
-TODO: how to make this parametrizable by max degree, 
-e.g. generatePolynomial(3) -> x^1, x^2, x^3, x^2*y, x*y^2,...?
-btw `@polyvar a[1:n]` works
-"""
+"Generates a random polynomial"
 function generatePolynomial()
   coefficients = [randUniform(-100.0, 100.0) for i in 1:6]
   return MultivariatePolynomials.polynomial([1, x, y, x^2, x*y, y^2], coefficients)
@@ -40,13 +35,6 @@ function calcOutput(p, pol)
   return pol(x => p.x, y => p.y)
 end
 
-function lower(p::AbstractPolynomial)
-  res = dict("variables" => variables(p)
-             "coefficients" => coefficients(p)
-             "monomials" => monomials(p)
-            )
-end
-
 function parseCommandline()
   s = ArgParseSettings()
   @add_arg_table s begin
@@ -56,6 +44,15 @@ function parseCommandline()
     "-o", "--output"
       help = "output file for generated points"
       arg_type = String
+  end
+  toReturn = parse_args(s)
+  if toReturn["amount"] == nothing
+    println("Specify the amount of generated points")
+    exit(-1)
+  end
+  if toReturn["output"] == nothing
+    println("Specify the output file")
+    exit(-1)
   end
 
   return parse_args(s)
@@ -70,16 +67,12 @@ function main()
     p.z = calcOutput(p, randomPolynomial)
   end
 
-  toOutput = Dict("polynomial" => randomPolynomial,
-                  "points" => randomPoints)
+  toOutput = Dict("points" => randomPoints)
   jsonOutput = json(toOutput)
-  if options["output"] == nothing
-    outputStream = STDOUT
-  else
-    outputStream = open(options["output"], "w")
-  end
+  outputStream = open(options["output"], "w")
   print(outputStream, jsonOutput)
   close(outputStream)
+  println("Done")
 end
 
 main()

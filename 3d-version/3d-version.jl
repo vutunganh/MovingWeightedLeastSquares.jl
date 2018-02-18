@@ -42,7 +42,7 @@ function parseQuery(query::String)
 end
 
 function wls(samplePoints::Vector{Point}, inputPoints)
-
+  
 end
 
 #TODO: dysfunctional cli prompt
