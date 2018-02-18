@@ -23,7 +23,7 @@ function parseCommandline()
 end
 
 "Reads the input and returns an array of points"
-function parseInput(inputFilename::String)
+function parseInputPoints(inputFilename::String)
   inputStream = open(inputFilename, "r")
   rawInput = readstring(inputStream)
   close(inputStream)
@@ -31,26 +31,33 @@ function parseInput(inputFilename::String)
   pointCount::Int64 = length(parsedInput["points"])
   parsedPoints = parsedInput["points"]
   toReturn::Vector{Point} = []
-  for i in 1:1
-    push!(toReturn, Point(parsedPoints[i]["x"], parsedPoints[i]["y"], parsedPoints[i]["z"]))
+  for i in 1:pointCount
+    push!(toReturn, Point(parsedPoints[i][1], parsedPoints[i][2], parsedPoints[i][3]))
   end
   return toReturn
+end
+
+function parseQuery(query::String)
+  return map(x -> parse(Float64, x), split(chomp(query)))
+end
+
+function wls(samplePoints::Vector{Point}, inputPoints)
+
 end
 
 #TODO: dysfunctional cli prompt
 function main()
   options = parseCommandline()
-  parseInput(options["input"])
+  samplePoints = parseInputPoints(options["input"])
   while true
     print("Input x and y > ")
-    input = readline(STDIN)
-    println(chomp(input))
-    println("")
-    flush(STDIN)
-    if eof(STDIN)
-      println("")
+    input = readline(Base.STDIN)
+    if eof(Base.STDIN)
       break
     end
+    println(input)
+    parsedInput = parseQuery(input)
+    wls(samplePoints, parsedInput)
   end
   println("Bye.")
 end
