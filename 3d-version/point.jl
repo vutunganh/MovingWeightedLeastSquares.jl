@@ -10,6 +10,9 @@ mutable struct Point
   x::Float64
   y::Float64
   z::Float64
+
+  Point(a::Real, b::Real, c::Real) = new(a, b, c)
+  Point(a::Array{<:Real, 3}) = new(a[1], a[2], a[3])
 end
 
 "Performs an element-wise addition"

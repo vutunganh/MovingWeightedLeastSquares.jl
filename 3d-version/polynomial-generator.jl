@@ -42,5 +42,3 @@ end
 
 end
 
-using PolynomialGenerator
-println(gen(3,4))
