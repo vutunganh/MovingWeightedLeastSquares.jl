@@ -1,7 +1,9 @@
 module PolynomialGenerator
 
-import DynamicPolynomials
-import MultivariatePolynomials
+using DynamicPolynomials
+using MultivariatePolynomials
+
+export gen
 
 """
 Generates a random polynomial
@@ -11,31 +13,34 @@ returns the polynomial variables and the polynomial itself
 
 note that the amount of variables is given by C(variableCount + maxDegree, variableCount), so don't overdo it
 """
-function gen(variableCount, maxDegree::Int64)
-  toReturn = []
-  variables = DynamicPolynomials.@polyvar x[1:variableCount]
-  for v in variables
-    for d in 1:maxDegree
-      push!(toReturn, v^d)
-    end
+function gen(variableCount::Int64, maxDegree::Int64)
+  vars = @polyvar x[1:variableCount]
+  if variableCount < 1
+    throw("nice one")
   end
-  for v in variables
+  toReturn::Vector{Monomial{true}} = [constantterm(1,x[1])]
+
+  for v in vars
+    tmpMons::Vector{Monomial{true}} = []
     for done in toReturn
-      if MultivariatePolynomials.nvariables(done) == 1 && MultivariatePolynomials.variables(done)[1] == v
-        continue
-      end
       for d in 1:maxDegree
-        tmp = done * (v^d)
-        if MultivariatePolynomials.degree(tmp) > maxDegree
+        tmp::Monomial{true} = done * v^d
+        if degree(tmp) > maxDegree
           break
         else
-          push!(toReturn, tmp)
+          push!(tmpMons, tmp)
         end
       end
     end
+    for m in tmpMons
+      push!(toReturn, m)
+    end
   end
-  return variables, toReturn
+
+  return vars, toReturn
 end
 
 end
 
+using PolynomialGenerator
+println(gen(3,4))
