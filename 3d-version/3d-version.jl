@@ -54,11 +54,11 @@ end
 
 function wls(samplePoints::Vector{Point}, inputPoint::Point)
   vars::Vector{PolyVar{true}}, b::Vector{Monomial{true}} = gen(2, 2) # TODO: parametrize this
-  for p in samplePoints
-    theta::Real = dd(inputPoint, p)
-    bx = subs(sum(b), vars[1] => p.x, vars[2] => p.y)
-    weightingFunction(theta, 0.0001) * bx * transpose(bx)
-  end
+  m = length(b)
+  n = length(samplePoints)
+  A = [weightingFunction(dd(inputPoint, samplePoints[j]), 0.0001) * Float64(subs(b[i], vars => (samplePoints[j].x, samplePoints[j].y))) for j in 1:n, i in 1:m] # just beautiful
+  firstTerm = inv(transpose(A) * A)
+  println(firstTerm)
 end
 
 # TODO: dysfunctional cli prompt
