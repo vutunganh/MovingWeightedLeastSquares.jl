@@ -11,7 +11,13 @@ mutable struct Point
   z::Float64
 
   Point(a::Real, b::Real, c::Real) = new(a, b, c)
-  Point(a::Array{<:Real, 3}) = new(a[1], a[2], a[3])
+end
+
+function Point(a::Vector{<: Real})
+  if length(a) > 3
+    throw(BoundsError())
+  end
+  Point(a[1], a[2], a[3])
 end
 
 "Performs an element-wise addition"
