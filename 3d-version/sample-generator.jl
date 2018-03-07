@@ -4,7 +4,8 @@ using DynamicPolynomials
 using MultivariatePolynomials
 using Base.Random
 using ArgParse
-using JSON
+using DataFrames
+using CSV
 using Point3D
 
 @polyvar x y
@@ -67,11 +68,12 @@ function main()
     p.z = calcOutput(p, randomPolynomial)
   end
 
-  toOutput = Dict("points" => randomPoints)
-  jsonOutput = json(toOutput)
-  outputStream = open(options["output"], "w")
-  print(outputStream, jsonOutput)
-  close(outputStream)
+  df = DataFrame()
+  for f in 1:length(fieldnames(randomPoints[1]))
+    col = [x[f] for x in randomPoints]
+    df[Symbol("x", f)] = col
+  end
+  CSV.write(options["output"], df)
   println("Done")
 end
 

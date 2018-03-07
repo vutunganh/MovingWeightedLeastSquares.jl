@@ -1,9 +1,8 @@
 module Point3D
 
-import Base: +, -, *, /
-import JSON.lower
+import Base: +, -, *, /, getindex
 
-export Point, +, -, *, /, dist, radial_distance, lower
+export Point, +, -, *, /, dist, radial_distance, getindex
 
 "A geometrical point structure."
 mutable struct Point
@@ -45,9 +44,19 @@ function radial_distance(p::Point)
   return dist(p, Point(0,0,0))
 end
 
-"Point JSON serialization"
-function lower(p::Point)
-  return [p.x, p.y, p.z]
+"Getindex for points, 1 -> x, 2 -> y, 3 -> z"
+function getindex(p::Point, i::Int)
+  @boundscheck if i < 1 || i > 3
+    throw(BoundsError())
+  end
+
+  if i == 1
+    return p.x
+  elseif i == 2
+    return p.y
+  else
+    return p.z
+  end
 end
 
 end
