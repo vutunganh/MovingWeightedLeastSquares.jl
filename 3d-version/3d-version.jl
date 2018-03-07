@@ -9,7 +9,8 @@ include("polynomial-generator.jl")
 using Point3D
 using PolynomialGenerator
 using ArgParse
-using JSON
+using DataFrames
+using CSV
 using DynamicPolynomials
 using MultivariatePolynomials
 
@@ -17,7 +18,7 @@ function parseCommandline()
   s = ArgParseSettings()
   @add_arg_table s begin
     "input"
-      help = "input json"
+      help = "a csv file with sample points"
       required = true
       arg_type = String
   end
@@ -27,15 +28,14 @@ end
 
 "Reads the input and returns an array of points"
 function parseInputPoints(inputFilename::String)
-  inputStream = open(inputFilename, "r")
-  rawInput = readstring(inputStream)
-  close(inputStream)
-  parsedInput = JSON.parse(rawInput)
-  pointCount::Int64 = length(parsedInput["points"])
-  parsedPoints = parsedInput["points"]
+  parsedInput = CSV.read(inputFilename)
+  pointCount::Int64 = size(parsedInput, 1)
+  dimensionCount::Int64 = size(parsedInput, 2)
   toReturn::Vector{Point} = []
-  for p in parsedPoints
-    push!(toReturn, Point(p[1], p[2], p[3]))
+  for i in 1:pointCount
+    p = parsedInput[i, :]
+    apt = [p[1, j] for j in 1:dimensionCount]
+    push!(toReturn, Point(apt))
   end
   return toReturn
 end
@@ -76,6 +76,7 @@ function main()
     inputPoint = Point(parsedInput[1], parsedInput[2], parsedInput[3])
     wls(samplePoints, inputPoint)
   end
+  println("")
   println("Bye.")
 end
 
