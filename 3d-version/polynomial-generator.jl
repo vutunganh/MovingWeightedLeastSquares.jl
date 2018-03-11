@@ -1,3 +1,4 @@
+__precompile__()
 module PolynomialGenerator
 
 using DynamicPolynomials
@@ -11,14 +12,14 @@ Generates a random polynomial
 @maxDegree - max degree of all terms
 returns the polynomial variables and the polynomial itself
 
-note that the amount of variables is given by C(variableCount + maxDegree, variableCount), so don't overdo it
+the amount of terms is given by (variableCount + maxDegree choose variableCount)
 """
 function gen(variableCount::Int64, maxDegree::Int64)
   vars = @polyvar x[1:variableCount]
   if variableCount < 1
     throw("nice one")
   end
-  toReturn::Vector{Monomial{true}} = [constantterm(1,x[1])]
+  toReturn::Vector{Monomial{true}} = [constantterm(1, sum(x))]
 
   for v in vars
     tmpMons::Vector{Monomial{true}} = []
