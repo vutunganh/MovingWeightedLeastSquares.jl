@@ -6,6 +6,9 @@
 
 include("point.jl")
 include("polynomial-generator.jl")
+
+__precompile__()
+module MWLS3D
 using Point3D
 using PolynomialGenerator
 using ArgParse
@@ -14,17 +17,7 @@ using CSV
 using DynamicPolynomials
 using MultivariatePolynomials
 
-function parseCommandline()
-  s = ArgParseSettings()
-  @add_arg_table s begin
-    "input"
-      help = "a csv file with sample points"
-      required = true
-      arg_type = String
-  end
-
-  return parse_args(s)
-end
+export wls, parseInputPoints
 
 "Reads the input and returns an array of points"
 function parseInputPoints(inputFilename::String)
@@ -40,45 +33,35 @@ function parseInputPoints(inputFilename::String)
   return toReturn
 end
 
-function parseQuery(query::String)
-  return map(x -> parse(Float64, x), split(chomp(query)))
-end
-
 function weightingFunction(d, EPS)
   return 1 / (d^2 + EPS^2)
 end
 
 function dd(p::Point, q::Point)
-  return sqrt((p.x - q.x)^2 + (p.y - q.y)^2)
+  sqrt((p.x - q.x)^2 + (p.y - q.y)^2)
 end
 
-function wls(samplePoints::Vector{Point}, inputPoint::Point)
-  vars::Vector{PolyVar{true}}, b::Vector{Monomial{true}} = gen(2, 2) # TODO: parametrize this
-  m = length(b)
-  n = length(samplePoints)
-  A = [weightingFunction(dd(inputPoint, samplePoints[j]), 0.0001) * Float64(subs(b[i], vars => (samplePoints[j].x, samplePoints[j].y))) for j in 1:n, i in 1:m] # just beautiful
-  firstTerm = inv(transpose(A) * A)
-  println(firstTerm)
-end
+function wls(samplePoints::Vector{Point}, EPS::Float64, dimensionCount::Int64, variableCount::Int64, inputPoint::Point)
+  println(inputPoint)
+  vars::Vector{PolyVar{true}}, b::Array{Monomial{true}} = gen(variableCount, dimensionCount)
+  basis = b * transpose(b)
+  println(basis)
+  firstTerm = zeros(length(b), length(b))
+  secondTerm = zeros(length(b))
 
-# TODO: dysfunctional cli prompt
-function main()
-  options = parseCommandline()
-  samplePoints = parseInputPoints(options["input"])
-  while true
-    print("Input x and y > ")
-    input = readline()
-    if input == ""
-      break
+  for s in samplePoints
+    distance = weightingFunction(dd(inputPoint, s), EPS)
+    for i in 1:length(b)
+      for j in 1:length(b)
+        firstTerm[i, j] += (distance * subs(basis[i, j], vars => (s.x, s.y)))
+      end
+      secondTerm[i] += (distance * subs(b[i], vars => (s.x, s.y)) * s.z)
     end
-    parsedInput = parseQuery(input)
-    push!(parsedInput, 0)
-    inputPoint = Point(parsedInput[1], parsedInput[2], parsedInput[3])
-    wls(samplePoints, inputPoint)
   end
-  println("")
-  println("Bye.")
+  result = firstTerm \ secondTerm
+  println(inv(firstTerm))
+  println(secondTerm)
+  return result
 end
-
-main()
+end
 
