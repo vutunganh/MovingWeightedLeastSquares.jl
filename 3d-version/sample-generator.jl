@@ -74,6 +74,7 @@ function main()
     df[Symbol("x", f)] = col
   end
   CSV.write(options["output"], df)
+  println("Polynomial '$randomPolynomial' was used for data generation")
   println("Done")
 end
 
