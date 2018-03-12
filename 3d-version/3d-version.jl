@@ -7,7 +7,7 @@
 include("point.jl")
 include("polynomial-generator.jl")
 
-__precompile__()
+Base.__precompile__()
 module MWLS3D
 using Point3D
 using PolynomialGenerator
@@ -17,7 +17,7 @@ using CSV
 using DynamicPolynomials
 using MultivariatePolynomials
 
-export wls, parseInputPoints
+export wls, parseInputPoints, wlsObject
 
 "Reads the input and returns an array of points"
 function parseInputPoints(inputFilename::String)
@@ -33,35 +33,53 @@ function parseInputPoints(inputFilename::String)
   return toReturn
 end
 
-function weightingFunction(d, EPS)
-  return 1 / (d^2 + EPS^2)
-end
-
 function dd(p::Point, q::Point)
   sqrt((p.x - q.x)^2 + (p.y - q.y)^2)
 end
 
-function wls(samplePoints::Vector{Point}, EPS::Float64, dimensionCount::Int64, variableCount::Int64, inputPoint::Point)
-  println(inputPoint)
-  vars::Vector{PolyVar{true}}, b::Array{Monomial{true}} = gen(variableCount, dimensionCount)
-  basis = b * transpose(b)
-  println(basis)
-  firstTerm = zeros(length(b), length(b))
-  secondTerm = zeros(length(b))
+struct WlsObject
+  vars::Vector{PolyVar{true}}
+  b::Array{Monomial{true}}
+  data::Vector{Point}
+  EPS::Float64
+  wfun
+  basis
+end
 
-  for s in samplePoints
-    distance = weightingFunction(dd(inputPoint, s), EPS)
-    for i in 1:length(b)
-      for j in 1:length(b)
-        firstTerm[i, j] += (distance * subs(basis[i, j], vars => (s.x, s.y)))
+function WlsObject(vars, b, data, EPS, wfun)
+  WlsObject(vars, b, data, EPS, wfun, b * transpose(b))
+end
+
+"""
+this function approximates the WlsObject at inputPoint
+"""
+function (w::WlsObject)(inputPoint::Point)
+  m = length(w.b)
+  firstTerm = zeros(m, m)
+  secondTerm = zeros(m)
+
+  for p in w.data
+    dist = w.wfun(dd(inputPoint, p), w.EPS)
+    for i in 1:m
+      for j in 1:m
+        firstTerm[i, j] += dist * subs(w.basis[i, j], w.vars => (p.x, p.y))
       end
-      secondTerm[i] += (distance * subs(b[i], vars => (s.x, s.y)) * s.z)
+      secondTerm[i] += dist * subs(w.b[i], w.vars => (p.x, p.y)) * p.z
     end
   end
+
   result = firstTerm \ secondTerm
-  println(inv(firstTerm))
-  println(secondTerm)
-  return result
+end
+
+"""
+this function creates a wls object
+
+wfun is a weighting function, that should be used
+it should take one parameter
+"""
+function wls(samplePoints::Vector{Point}, variableCount::Int64, dimensionCount::Int64, EPS::Float64, wfun)
+  vars::Vector{PolyVar{true}}, b::Array{Monomial{true}} = gen(variableCount, dimensionCount)
+  return WlsObject(vars, b, samplePoints, EPS, wfun)
 end
 end
 
