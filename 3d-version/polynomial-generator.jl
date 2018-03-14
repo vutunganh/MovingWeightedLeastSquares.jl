@@ -1,44 +1,48 @@
-__precompile__()
 module PolynomialGenerator
 
 using DynamicPolynomials
 using MultivariatePolynomials
 
-export gen
+export generate
 
 """
-Generates a random polynomial
-@variableCount - x_1, x_2, ..., x_variableCount
-@maxDegree - max degree of all terms
-returns the polynomial variables and the polynomial itself
+    `generate(variableCount::Int, maxDegree:Int)`
 
-the amount of terms is given by (variableCount + maxDegree choose variableCount)
+Generates a random polynomial.
+
+# Arguments
+- `variableCount::Int`: the amount of variables, aka dimension of variable,
+- `maxDegree::Int`: maximal degree of each term in the polynomial, aka spatial dimension.
+
+Returns the polynomial variables and the polynomial itself
+
+In general, the amount of terms is given by (variableCount + maxDegree choose variableCount).
 """
-function gen(variableCount::Int64, maxDegree::Int64)
+function generate(variableCount::Int, maxDegree::Int)
   vars = @polyvar x[1:variableCount]
-  if variableCount < 1
-    throw("nice one")
+  if variableCount < 1 || maxDegree < 1
+    error("Cannot generate a polynomial with negative dimensions")
   end
-  toReturn::Vector{Monomial{true}} = [constantterm(1, sum(x))]
+  monomials::Vector{Monomial{true}} = [constantterm(1, sum(vars))]
 
   for v in vars
-    tmpMons::Vector{Monomial{true}} = []
-    for done in toReturn
+    tmpMonomials::Vector{Monomial{true}} = []
+    for done in monomials
       for d in 1:maxDegree
         tmp::Monomial{true} = done * v^d
         if degree(tmp) > maxDegree
           break
         else
-          push!(tmpMons, tmp)
+          push!(tmpMonomials, tmp)
         end
       end
     end
-    for m in tmpMons
-      push!(toReturn, m)
+    for m in tmpMonomials
+      push!(monomials, m)
     end
   end
 
-  return vars, toReturn
+  return vars, monomials
 end
 
 end
