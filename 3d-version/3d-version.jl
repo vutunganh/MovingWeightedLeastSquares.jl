@@ -1,9 +1,3 @@
-# Weighted least squares in 3D space.
-# Approximation will be done with polynomials.
-# Assume that approximated function will be in form f: R^2 -> R
-# The primary purpose of this program is to find all mistakes, that will
-# happen in the real program and solve them early.
-
 include("polynomial-generator.jl")
 
 Base.__precompile__()
@@ -90,7 +84,7 @@ function (obj::WlsObject)(inPt::Point, value::Bool)
 
   coefficients = firstTerm \ secondTerm
   if value
-    poly = sum(coefficients .* obj.b)
+    poly = polynomial(coefficients, obj.b)
     return poly(obj.vars => inPt)
   else
     return coefficients
@@ -109,7 +103,7 @@ end
 """
 function wls(inputs::Vector{Point}, outputs::Vector{Float64}, maxDegree::Int64, EPS::Float64, wfun::Function)
   inputDimension = length(inputs[1])
-  vars::Vector{PolyVar{true}}, b::Vector{Monomial{true}} = gen(inputDimension, maxDegree)
+  vars::Vector{PolyVar{true}}, b::Vector{Monomial{true}} = generate(inputDimension, maxDegree)
   return WlsObject(vars, b, inputs, outputs, EPS, wfun)
 end
 end
