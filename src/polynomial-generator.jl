@@ -1,24 +1,17 @@
-module PolynomialGenerator
-
-using DynamicPolynomials
-using MultivariatePolynomials
-
-export generate
-
 """
     `generate(variableCount::Int, maxDegree:Int)`
 
-Generates a random polynomial.
+Generates an array of monomials.
 
 # Arguments
 - `variableCount::Int`: the amount of variables, aka dimension of variable,
 - `maxDegree::Int`: maximal degree of each term in the polynomial, aka spatial dimension.
 
-Returns the polynomial variables and the polynomial itself
+Returns the monomial variables and the monomials themselves.
 
-In general, the amount of terms is given by (variableCount + maxDegree choose variableCount).
+In general, the amount of terms is given by `{variableCount + maxDegree \choose variableCount}`.
 """
-function generate(variableCount::Int, maxDegree::Int)
+function generateMonomials(variableCount::Int, maxDegree::Int)
   vars = @polyvar x[1:variableCount]
   if variableCount < 1 || maxDegree < 1
     error("Cannot generate a polynomial with negative dimensions")
@@ -43,7 +36,5 @@ function generate(variableCount::Int, maxDegree::Int)
   end
 
   return vars, monomials
-end
-
 end
 
