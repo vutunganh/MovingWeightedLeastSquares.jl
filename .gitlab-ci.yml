@@ -6,7 +6,7 @@ before_script:
 
 default:
   script:
-    # - julia -e "Pkg.test(\"MovingWeightedLeastSquares\"; coverage = true)"
+    - julia -e "Pkg.test(\"MovingWeightedLeastSquares\"; coverage = true)"
     # - julia coverage_script.jl
 
 pages:
