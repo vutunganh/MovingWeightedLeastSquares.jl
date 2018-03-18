@@ -13,7 +13,8 @@ include("io.jl")
 include("polynomial-generator.jl")
 export generateRandomData
 include("sample-generator.jl")
-include("3d-version.jl")
+include("wls-object.jl")
+include("wls-ops.jl")
 
 export 
 end
