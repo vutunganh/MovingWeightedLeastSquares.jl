@@ -36,7 +36,7 @@ end
 """
 function wls(inputs::Vector{Point}, outputs::Vector{Float64}, maxDegree::Int64, EPS::Float64, wfun::Function)
   inputDimension = length(inputs[1])
-  vars::Vector{PolyVar{true}}, b::Vector{Monomial{true}} = generate(inputDimension, maxDegree)
+  vars::Vector{PolyVar{true}}, b::Vector{Monomial{true}} = generateMonomials(inputDimension, maxDegree)
   return WlsObject(vars, b, inputs, outputs, EPS, wfun)
 end
 
