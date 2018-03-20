@@ -4,7 +4,6 @@
 - `b::Vector{Monomial{true}}`: basis of the polynomial, these are constructed automatically if constructed by the `wls` function
 - `inputs`: the vector or array view of input points
 - `outputs`: the vector or array view of output scalars
-- `inputDimension::Int`: dimension of each input in `inputs`, this is constructed automatically if constructed by the `wls` function
 - `EPS::Float64`: ε of the method
 - `weightFunction::Function`: weighting function of the method
 - `matrix`: the result of `b * transpose(b)`, this is constructed automatically if constructed by the `wls` function
@@ -14,14 +13,13 @@ struct WlsObject
   b::Vector{Monomial{true}}
   inputs
   outputs
-  inputDimension::Int
   EPS::Float64
   weightFunction
   matrix
 end
 
 function WlsObject(vars, b, inputs, outputs, EPS, wfun)
-  WlsObject(vars, b, inputs, outputs, size(inputs, 2), EPS, wfun, b * transpose(b))
+  WlsObject(vars, b, inputs, outputs, EPS, wfun, b * transpose(b))
 end
 
 """
@@ -35,9 +33,8 @@ end
 - `wfun::Function`: wfun should be in form `wfun(distance::Float64, EPS::Float64)`.
 """
 function wls(inputs, outputs, maxDegree::Int64, EPS::Float64, wfun::Function)
-  inputDimension = size(inputs, 2)
-  println(inputDimension)
-  vars::Vector{PolyVar{true}}, b::Vector{Monomial{true}} = generateMonomials(inputDimension, maxDegree)
+  inputDim = size(inputs, 2)
+  vars::Vector{PolyVar{true}}, b::Vector{Monomial{true}} = generateMonomials(inputDim, maxDegree)
   return WlsObject(vars, b, inputs, outputs, EPS, wfun)
 end
 
