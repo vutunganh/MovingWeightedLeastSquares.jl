@@ -6,12 +6,12 @@ If `value` is true, the approximated value will be outputted instead of the coef
 """
 function (obj::WlsObject)(inPt::Point, value::Bool)
   m = length(obj.b)
-  datalen = length(obj.inputs)
+  datalen = size(obj.inputs, 1)
   firstTerm = zeros(m, m)
   secondTerm = zeros(m)
 
   for p in 1:datalen
-    curPt = obj.inputs[p]
+    curPt = view(obj.inputs, p, :)
     w = obj.weightFunction(norm(inPt - curPt), obj.EPS)
     for i in 1:m
       for j in 1:m
