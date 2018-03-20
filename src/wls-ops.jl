@@ -30,3 +30,19 @@ function (obj::WlsObject)(inPt::Point, value::Bool)
   end
 end
 
+
+function plotWls(obj::WlsObject)
+  inputDim = size(obj.inputs, 2)
+  println(inputDim)
+  if inputDim < 1 || inputDim > 2
+    error("Cannot plot $inputDim dimensional graph")
+  end
+  x = [linspace(-2, 2, 21) for i in 1:inputDim]
+  println(x)
+  println(length(x))
+  if inputDim == 2
+    return plot(x[1], x[2], [obj([a, b], true) for b in x[1], a in x[2]], linetype=:surface)
+  else
+    return plot(x[1], [obj([a], true) for a in x[1]])
+  end
+end

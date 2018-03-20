@@ -5,13 +5,14 @@ const Point = Vector{Float64}
 
 using DynamicPolynomials
 using MultivariatePolynomials
+using Plots
 
 export parseInputPoints
 include("io.jl")
 include("polynomial-generator.jl")
 export generateRandomData
 include("sample-generator.jl")
-export WlsObject, wls
+export WlsObject, wls, plotWls
 include("wls-object.jl")
 include("wls-ops.jl")
 
