@@ -1,22 +1,15 @@
 """
     `parseInputPoints(inputFilename::String)`
 
-Parses a .csv file into a vector of inputs and outputs.
-TODO: slice instead of copying
+Parses a .csv file into a view of inputs and outputs.
 """
 function parseInputPoints(inputFilename::String)
-  parsedInput = CSV.read(inputFilename)
+  parsedInput = readcsv(inputFilename; skipstart = 1)
   pointCount::Int = size(parsedInput, 1)
   dimensions::Int = size(parsedInput, 2)
-  inputs = Vector{Point}(pointCount)
-  inputDimension::Int = dimensions - 1
-  outputs = Vector{Float64}(pointCount)
-  for i in 1:pointCount
-    p = parsedInput[i, :]
-    ipt = [p[1, j] for j in 1:inputDimension]
-    inputs[i] = ipt
-    outputs[i] = p[1, dimensions]
-  end
+  inputDim::Int = dimensions - 1
+  inputs = view(parsedInput, :, 1:inputDim)
+  outputs = view(parsedInput, :, dimensions)
   return inputs, outputs
 end
 

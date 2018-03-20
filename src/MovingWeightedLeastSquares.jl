@@ -3,8 +3,6 @@ module MovingWeightedLeastSquares
 
 const Point = Vector{Float64}
 
-using DataFrames
-using CSV
 using DynamicPolynomials
 using MultivariatePolynomials
 
