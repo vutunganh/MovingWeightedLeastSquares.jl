@@ -7,7 +7,7 @@ using DynamicPolynomials
 using MultivariatePolynomials
 using Plots
 
-export parseInputPoints
+export readData
 include("io.jl")
 include("polynomial-generator.jl")
 export generateRandomData
