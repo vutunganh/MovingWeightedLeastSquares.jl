@@ -16,7 +16,7 @@ include("sample-generator.jl")
 export WlsObject, wls, plotWls
 include("wls-object.jl")
 include("wls-ops.jl")
-export MwlsObject, mwls, getMwlsCoefficients
+export MwlsObject, mwls, calcMwlsCoefficients
 include("mwls-object.jl")
 include("mwls-ops.jl")
 
