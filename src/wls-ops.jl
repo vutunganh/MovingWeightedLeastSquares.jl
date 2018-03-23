@@ -6,7 +6,7 @@ function calcWlsCoefficients(obj::WlsObject, inPt::Point)
 
   for p in 1:datalen
     curPt = obj.inputs[p, :]
-    w = obj.weightFunction(norm(inPt - curPt), obj.EPS)
+    w = obj.weightFunc(norm(inPt - curPt), obj.EPS)
     for i in 1:m
       for j in 1:m
         firstTerm[i, j] += w * obj.matrix[i, j](obj.vars => curPt)
@@ -23,11 +23,10 @@ end
     `(wo::WlsObject)(inputPoint::Point, value::Bool)`
 
 Approximates the `WlsObject` at `inputPoint`.
-If `value` is true, the approximated value will be outputted instead of the coefficients.
 """
 function (obj::WlsObject)(inPt::Point)
   c = calcWlsCoefficients(obj, inPt)
-  poly = polynomial(coefficients, obj.b)
+  poly = polynomial(c, obj.b)
   return poly(obj.vars => inPt)
 end
 

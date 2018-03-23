@@ -3,7 +3,7 @@
 - `inputs`: the vector or array view of input points
 - `outputs`: the vector or array view of output scalars
 - `EPS::Float64`: ε of the method
-- `weightFunction::Function`: weighting function of the method
+- `weightFunc::Function`: weighting function of the method
 
 # Automatically created attributes
 If created by the `wls` function, the attributes in this section are created automatically.

@@ -13,7 +13,7 @@ include("io.jl")
 include("polynomial-generator.jl")
 export generateRandomData
 include("sample-generator.jl")
-export WlsObject, wls, plotWls
+export WlsObject, wls, calcWlsCoefficients, plotWls
 include("wls-object.jl")
 include("wls-ops.jl")
 export MwlsObject, mwls, calcMwlsCoefficients
