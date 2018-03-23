@@ -5,6 +5,7 @@ const Point = Vector{Float64}
 
 using DynamicPolynomials
 using MultivariatePolynomials
+using NearestNeighbors
 using Plots
 
 export readData
@@ -15,6 +16,9 @@ include("sample-generator.jl")
 export WlsObject, wls, plotWls
 include("wls-object.jl")
 include("wls-ops.jl")
+export MwlsObject, mwls, calcMwlsCoefficients
+include("mwls-object.jl")
+include("mwls-ops.jl")
 
 end
 
