@@ -43,6 +43,9 @@ Euclidean metric is used by default.
 """
 function mwls(inputs, outputs, maxDegree::Int, leafSize::Int, EPS::Float64, weightFunc::Function)
   inputDim = size(inputs, 2)
+  if inputDim == 1
+    inputs = hcat(inputs, zeros(size(inputs, 1)))
+  end
   vars::Vector{PolyVar{true}}, b::Vector{Monomial{true}} = generateMonomials(inputDim, maxDegree)
   return MwlsObject(inputs, outputs, EPS, leafSize, weightFunc, vars, b)
 end
