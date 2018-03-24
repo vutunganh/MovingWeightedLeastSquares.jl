@@ -36,6 +36,9 @@ Approximates the `MwlsObject` at `inputPoint`.
 `Dist` determines the method's distance threshold around `inPt`.
 """
 function (obj::MwlsObject)(inPt::Point, dist::Float64)
+  if size(inPt, 1) == 1
+    inPt = [inPt; 0]
+  end
   c = calcMwlsCoefficients(obj, inPt, dist)
   poly = polynomial(c, obj.b)
   return poly(obj.vars => inPt)
