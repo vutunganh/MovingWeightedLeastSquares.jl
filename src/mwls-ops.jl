@@ -13,6 +13,9 @@ function calcMwlsCoefficients(obj::MwlsObject, inPt::Point, dist::Float64)
   secondTerm = zeros(m)
 
   data = getInrangeData(obj, inPt, dist)
+  if length(data) == 0
+    return 0.
+  end
 
   for p in data
     curPt = obj.inputs[p, :]
