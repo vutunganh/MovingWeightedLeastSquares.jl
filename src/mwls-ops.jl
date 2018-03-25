@@ -14,7 +14,7 @@ function calcMwlsCoefficients(obj::MwlsObject, inPt::Point, dist::Float64)
 
   data = getInrangeData(obj, inPt, dist)
   if length(data) == 0
-    return 0.
+    return secondTerm
   end
 
   for p in data
