@@ -33,7 +33,6 @@ end
 
 function plotWls(obj::WlsObject)
   inputDim = size(obj.inputs, 2)
-  println(inputDim)
   if inputDim < 1 || inputDim > 2
     error("Cannot plot $inputDim dimensional graph")
   end
