@@ -41,7 +41,7 @@ Euclidean metric is used by default.
 - `EPS::Float64`: ε of the method,
 - `weightFunc::Function`: weighting function of the method. It should be in form `(distance, EPS) -> Float64`.
 """
-function mwls(inputs, outputs, maxDegree::Int, leafSize::Int, EPS::Float64, weightFunc::Function)
+function mwls(inputs, outputs, maxDegree::Int, EPS::Float64, weightFunc::Function; leafSize=10)
   inputDim = size(inputs, 2)
   if inputDim == 1
     inputs = hcat(inputs, zeros(size(inputs, 1)))
