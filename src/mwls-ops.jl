@@ -35,7 +35,7 @@ end
 Approximates the `MwlsObject` at `inputPoint`.
 `Dist` determines the method's distance threshold around `inPt`.
 """
-function (obj::MwlsObject)(inPt::Point, dist::Float64)
+function (obj::MwlsObject)(inPt::Point, dist = obj.EPS)
   if size(inPt, 1) == 1
     inPt = [inPt; 0]
   end
