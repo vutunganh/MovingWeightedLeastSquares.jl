@@ -2,6 +2,10 @@ function getInrangeData(obj::MwlsObject, inPt::Point, dist::Float64 = obj.EPS)
   return inrange(obj.tree, inPt, dist)
 end
 
+function fallbackGetInrangeData(obj::MwlsObject, inPt::Point, amount, dist::Float64 = obj.EPS)
+  return knn(obj.tree, inPt, length(obj.b))
+end
+
 """
     `calcMwlsCoefficients(obj::MwlsObject, inPt::Point, dist::Float64)`
 
@@ -13,7 +17,7 @@ function calcMwlsCoefficients(obj::MwlsObject, inPt::Point, dist::Float64 = obj.
   secondTerm = zeros(m)
 
   data = getInrangeData(obj, inPt, dist)
-  if length(data) == 0
+  if length(data) < length(obj.b)
     return secondTerm
   end
 
