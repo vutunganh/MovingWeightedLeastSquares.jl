@@ -55,7 +55,10 @@ Calculates the differentiated polynomials in each direction.
 function calcDiffMwlsPolys(obj::MwlsObject, inPt::Point, dirs::NTuple{N, Int64}; dist = obj.EPS) where {N}
   c = calcMwlsCoefficients(obj, inPt, dist)
   poly = polynomial(c, obj.b)
-  return [differentiate(poly, obj.vars[i], dirs[i]) for i in 1:length(obj.vars)]
+  for i in 1:length(dirs)
+    poly = differentiate(poly, obj.vars[i], dirs[i])
+  end
+  return poly
 end
 
 "this function exists, because writing a tuple literal with a single element is difficult"
@@ -74,5 +77,5 @@ function diff(obj::MwlsObject, inPt::Point, dirs::NTuple{N, Int64}; dist = obj.E
   end
   N != length(obj.vars) && error("Mismatch between tuple size and amount of variables")
   pl = calcDiffMwlsPolys(obj, inPt, dirs; dist = dist)
-  return [p(obj.vars => inPt) for p in pl]
+  return pl(obj.vars => inPt)
 end
