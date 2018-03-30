@@ -36,14 +36,14 @@ Euclidean metric is used by default.
 # Arguments
 - `inputs`: a 2d array of input points where each point is on a single row,
 - `outputs`: a vector of output scalars,
-- `maxDegree::Int64`: the maximal degree of each polynomial term in the method,
 - `EPS::Float64`: ε of the method (default distance threshold for neighbor search),
 - `weightFunc::Function`: weighting function of the method. It should be in form `(distance, EPS) -> Float64`.
 
 # Keyword arguments
 - `leafSize::Int64`: the size of the leaves in the kd-tree, 10 by default.
+- `maxDegree::Int64`: the maximal degree of each polynomial term in the method, 2 by default.
 """
-function mwls(inputs, outputs, maxDegree::Int, EPS::Float64, weightFunc::Function; leafSize = 10)
+function mwls(inputs, outputs, EPS::Float64, weightFunc::Function; leafSize::Int = 10, maxDegree::Int = 10)
   length(outputs) != size(inputs, 1) && error("The amount of inputs and outputs differs.")
   inputDim = size(inputs, 2)
   if inputDim == 1
