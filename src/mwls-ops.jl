@@ -2,19 +2,16 @@ function getInrangeData(obj::MwlsObject, inPt::Point, dist::Float64 = obj.EPS)
   return inrange(obj.tree, inPt, dist)
 end
 
-function fallbackGetInrangeData(obj::MwlsObject, inPt::Point, amount, dist::Float64 = obj.EPS)
-  return knn(obj.tree, inPt, length(obj.b))
-end
-
 """
     `calcMwlsCoefficients(obj::MwlsObject, inPt::Point, dist::Float64)`
 
-Calculates the coefficients of the linear combination of the basis.
+Calculates the coefficients of the linear combination of the basis for each vector of outputs.
 """
-function calcMwlsCoefficients(obj::MwlsObject, inPt::Point, dist::Float64 = obj.EPS)
-  m = length(obj.b)
+function calcMwlsCoefficients(obj::MwlsObject, inPt::Point, dist::Real = obj.EPS)
+  m = size(obj.b, 1)
+  outputDim = size(obj.outputs, 1)
   firstTerm = zeros(m, m)
-  secondTerm = zeros(m)
+  secondTerm = zeros(outputDim, m)
 
   data = getInrangeData(obj, inPt, dist)
   if length(data) < length(obj.b)
@@ -22,17 +19,18 @@ function calcMwlsCoefficients(obj::MwlsObject, inPt::Point, dist::Float64 = obj.
   end
 
   for p in data
-    curPt = obj.inputs[p, :]
+    curPt = obj.inputs[:, p]
     w = obj.weightFunc(norm(inPt - curPt), obj.EPS)
-    for i in 1:m
-      for j in 1:m
+    for j in 1:m
+      for i in 1:m
         firstTerm[i, j] += w * obj.matrix[i, j](obj.vars => curPt)
       end
-      secondTerm[i] += w * obj.b[i](obj.vars => curPt) * obj.outputs[p]
+      tmp = w * obj.b[j](obj.vars => curPt) * obj.outputs[:, p]
+      secondTerm[:, j] += tmp
     end
   end
 
-  result = firstTerm \ secondTerm
+  result = firstTerm \ transpose(secondTerm)
   return result
 end
 
@@ -43,12 +41,14 @@ Approximates the `MwlsObject` at `inputPoint`.
 `dist` determines the method's distance threshold around `inPt`.
 """
 function (obj::MwlsObject)(inPt::Point, dist = obj.EPS)
-  if size(inPt, 1) == 1
-    inPt = [inPt; 0]
-  end
-  c = calcMwlsCoefficients(obj, inPt, dist)
-  poly = polynomial(c, obj.b)
-  return poly(obj.vars => inPt)
+  cs = calcMwlsCoefficients(obj, inPt, dist)
+  poly = [polynomial(cs[:, i], obj.b) for i in 1:size(cs, 2)]
+  res = [p(obj.vars => inPt) for p in poly]
+  return length(res) == 1 ? res[1] : res
+end
+
+function (obj::MwlsObject)(inPt::Real, dist = obj.EPS)
+  return obj([inPt, 0], dist)
 end
 
 """
@@ -57,16 +57,22 @@ end
 Calculates the differentiated polynomials in each direction.
 """
 function calcDiffMwlsPolys(obj::MwlsObject, inPt::Point, dirs::NTuple{N, Int64}; dist = obj.EPS) where {N}
-  c = calcMwlsCoefficients(obj, inPt, dist)
-  poly = polynomial(c, obj.b)
-  for i in 1:length(dirs)
-    poly = differentiate(poly, obj.vars[i], dirs[i])
+  cs = calcMwlsCoefficients(obj, inPt, dist)
+  poly = [polynomial(cs[:, i], obj.b) for i in 1:size(cs, 2)]
+  for p in poly
+    for i in 1:length(dirs)
+      p = differentiate(p, obj.vars[i], dirs[i])
+    end
   end
   return poly
 end
 
+function diff(obj::MwlsObject, inPt::Real, dirs::Int; dist = obj.EPS)
+  diff(obj, [inPt, 0], Tuple(dirs); dist = dist)
+end
+
 "this function exists, because writing a tuple literal with a single element is difficult"
-function diff(obj::MwlsObject, inPt::Point, dirs::Int64; dist = obj.EPS)
+function diff(obj::MwlsObject, inPt::Point, dirs::Int; dist = obj.EPS)
   diff(obj, inPt, Tuple(dirs); dist = dist)
 end
 
@@ -75,11 +81,9 @@ end
 
 Calculates the approximated derivative at `inPt`, where `x[i]` is differentiated `dirs[i]` times.
 """
-function diff(obj::MwlsObject, inPt::Point, dirs::NTuple{N, Int64}; dist = obj.EPS) where {N}
-  if length(inPt) == 1
-    inPt = [inPt; 0]
-  end
+function diff(obj::MwlsObject, inPt::Point, dirs::NTuple{N, Int}; dist = obj.EPS) where {N}
   N != length(obj.vars) && error("Mismatch between tuple size and amount of variables")
   pl = calcDiffMwlsPolys(obj, inPt, dirs; dist = dist)
-  return pl(obj.vars => inPt)
+  res = [p(obj.vars => inPt) for p in pl]
+  return length(res) == 1 ? res[1] : res
 end
