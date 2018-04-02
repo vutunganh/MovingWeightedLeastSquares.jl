@@ -1,7 +1,7 @@
 __precompile__()
 module MovingWeightedLeastSquares
 
-const Point = Vector{Float64}
+const Point = Vector{T} where {T <: Real}
 
 using DynamicPolynomials
 using MultivariatePolynomials
