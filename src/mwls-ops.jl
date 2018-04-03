@@ -1,4 +1,4 @@
-function getInrangeData(obj::MwlsObject, inPt::Point, dist::Float64 = obj.EPS)
+function getInrangeData(obj::MwlsObject, inPt::Point, dist::Real = obj.EPS)
   return inrange(obj.tree, inPt, dist)
 end
 
@@ -15,7 +15,7 @@ function calcMwlsCoefficients(obj::MwlsObject, inPt::Point, dist::Real = obj.EPS
 
   data = getInrangeData(obj, inPt, dist)
   if length(data) < length(obj.b)
-    return secondTerm
+    return transpose(secondTerm)
   end
 
   for p in data
