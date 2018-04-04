@@ -67,6 +67,7 @@ function calcDiffMwlsPolys(obj::MwlsObject, inPt::Point, dirs::NTuple{N, Int64};
   return poly
 end
 
+"this function exists, because writing a 1d point is cumbersome"
 function diff(obj::MwlsObject, inPt::Real, dirs::Int; dist = obj.EPS)
   diff(obj, [inPt, 0], Tuple(dirs); dist = dist)
 end

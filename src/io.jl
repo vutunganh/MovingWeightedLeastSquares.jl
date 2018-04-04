@@ -1,7 +1,8 @@
 """
     `readData(inputFilename::String)`
 
-Parses a .csv file into an array of inputs and an array of outputs. Pass kwarg `skipStart = 0`, if skipping the header is not desired.
+Parses a .csv file into an array of inputs and an array of outputs.
+Pass kwarg `skipStart = 0`, if skipping the header is not desired.
 """
 function readData(inputFilename::String; skipStart = 1)
   parsedInput = readcsv(inputFilename; skipstart = skipStart)

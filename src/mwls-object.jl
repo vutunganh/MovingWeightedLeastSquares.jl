@@ -1,7 +1,7 @@
 """
 # User provided attributes
 - `inputs::Array{Float64, 2}`: a 2d array of input points where each point is in a single column,
-- `outputs::Vector{Float64}`: a 2d array of of outputs where each output is in a single column,
+- `outputs::Array{Float64, N}`: a 2d array or a vector of of outputs where each output is in a single column,
 - `EPS::Float64`: ε of the method (default distance threshold for neighbor search),
 - `weightFunc::Function`: weighting function of the method.
 
@@ -33,13 +33,11 @@ function MwlsObject(inputs, outputs, EPS, weightFunc, vars, b; leafSize = 10)
 end
 
 """
-mwls(inputs::Array{Float64, 2}, outputs::Vector{Float64}, maxDegree::Int, leafSize::Int, EPS::Float64, weightFunc::Function)
-
 Euclidean metric is used.
 
 # Arguments
 - `inputs`: a 2d array of input points where each point is on a single row,
-- `outputs`: a vector of output scalars,
+- `outputs`: a 2d array or a vector of output scalars where each output is on a single row,
 - `EPS::Float64`: ε of the method (default distance threshold for neighbor search),
 - `weightFunc::Function`: weighting function of the method. It should be in form `(distance, EPS) -> Float64`.
 
@@ -64,6 +62,11 @@ function mwls(inputs::Array{T, N},
                     leafSize = leafSize)
 end
 
+"""
+In this `mwls()` function, the inputs and outupts are passed in a single array.
+It is assumed that each pair of input and output is on a single row.
+Dimension of the output is specified with kwarg `outputDim`.
+"""
 function mwls(input::Array{T, 2},
               EPS::Real, weightFunc::Function;
               outputDim::Int = 1, leafSize::Int = 10,
