@@ -1,38 +1,57 @@
-const GridType = Array{LinkedList{T}} where {T <: Int}
-
-struct CellLinkedList{D}
+"""
+# Attributes
+- `data::Array{T, 2} where {T <: Real}`: an array holding the original data
+- `grid::Array{LinkedList{T}} where {T <: Int}`: the gridded space
+- `EPS::Real`: the edge length of each grid cube
+- `maxs::Vector{T} where {T <: Real}`: stores the maximal coordinate over all data
+- `mins::Vector{T} where {T <: Real}`: stores the minimal coordinate over all data
+"""
+mutable struct CellLinkedList
   data::Array{T, 2} where {T <: Real}
-  grid::Array{LinkedList{T}, D} where {T <: Int}
+  grid::Array{LinkedList{T}} where {T <: Int}
   EPS::Real
   maxs::Vector{T} where {T <: Real}
   mins::Vector{T} where {T <: Real}
 end
 
+"""
+Calculates the amount of cubes in the grid.
+"""
 function cllCubeCount(maxs::Vector{T}, mins::Vector{T}, EPS::Real) where {T <: Real}
   size(maxs, 1) != size(mins, 1) && throw(DimensionMismatch())
   return [Int(ceil(maxs[i] / EPS) - floor(mins[i] / EPS)) for i in 1:size(maxs, 1)]
 end
 
+"""
+Creates a grid of empty linked lists.
+"""
 function cllCreateEmptyGrid(cubes::Vector{Int})
   return fill(nil(Int), Tuple(cubes))
 end
 
+"""
+Finds points index in the grid of `cll`.
+"""
 function cllIndex(cll::CellLinkedList, pt::Point)
-  return Int.(floor.((pt - cll.mins) / cll.EPS)) + 1
+  return cllIndex(cll.mins, cll.EPS, pt)
 end
 
+"""
+Finds points index in the grid given by `mins` and `EPS`.
+"""
 function cllIndex(mins::Vector{T}, EPS::Real, pt::Point) where {T <: Real}
   return Int.(floor.((pt - mins) / EPS)) + 1
 end
 
-function cllRecreateGrid!(oldGrid::GridType,
-                          newGrid::GridType,
-                          mins::Vector{T},
-                          EPS::Real) where {T <: Real}
-  for l in oldGrid
+"""
+Some operations on the CLL might increase the size of the gridded space. Instead of recreating a new CLL, we reuse the already created lists assuming that `EPS` hasn't changed.
+"""
+function cllRecreateGrid!(cll::CellLinkedList,
+                          newGrid::Array{LinkedList{T}}) where {T <: Int}
+  for l in cll.grid
     l == nil() && continue
 
-    pos = cllIndex(mins, EPS, head(l))
+    pos = cllIndex(cll.mins, cll.EPS, cll.data[:, head(l)])
     newGrid[pos...] = l
   end
 end
@@ -43,7 +62,7 @@ Each point is in a single column.
 `EPS` is the edge length of each hypercube of the cell linked list.
 Also `EPS` will be used by default, when searching for neighbors.
 """
-function CellLinkedList(data::Array{T, 2}, EPS::T) where {T <: Real}
+function CellLinkedList(data::Array{T, 2}, EPS::Real) where {T <: Real}
   dim = size(data, 1)
   cnt = size(data, 2)
   maxs = [maximum(data[i, :]) for i in 1:dim]
@@ -59,22 +78,29 @@ function CellLinkedList(data::Array{T, 2}, EPS::T) where {T <: Real}
   return CellLinkedList(data, grid, EPS, maxs, mins)
 end
 
+"""
+Adds a point to a CLL.
+"""
 function cllAdd!(cll::CellLinkedList, pt::Point)
   size(pt, 1) != size(cll.data, 1) && throw(DimensionMismatch())
   nMax = max.(pt, cll.maxs)
   nMin = min.(pt, cll.mins)
   if nMax != cll.maxs || nMin != cll.mins
-    newGrid::GridType = cllCreateEmptyGrid(cllCubeCount(nMax, nMin, cll.EPS))
-    cllRecreateGrid!(cll.grid, newGrid, nMin, cll.EPS)
+    newGrid::Array{LinkedList{Int}, size(pt, 1)} = cllCreateEmptyGrid(cllCubeCount(nMax, nMin, cll.EPS))
+    cllRecreateGrid!(cll, newGrid)
     cll.grid = newGrid
     cll.maxs = nMax
     cll.mins = nMin
   end
-  pos = cll.index(pt)
-  hcat(cll.data, pt)
+  pos = cllIndex(cll, pt)
+  cll.data = hcat(cll.data, pt)
   cll.grid[pos...] = cons(size(cll.data, 2), cll.grid[pos...])
+  return nothing
 end
 
+"""
+Removes a point from the its respective linked list. It remains in `data`.
+"""
 function cllRemoveIdx(cll::CellLinkedList, idx::Int, pos)
   h = cll.grid[pos...]
   toDel = tail(h)
@@ -106,8 +132,12 @@ function cllRemove!(cll::CellLinkedList, idx::Int)
   cllRemoveIdx(cll, idx, pos)
 end
 
+"""
+Changes `idx`th data to new coordinates.
+"""
 function cllModify!(cll::CellLinkedList, idx::Int, newPt::Point)
-  oldPos = cllIndex(cll, data[:, idx])
+  oldPos = cllIndex(cll, cll.data[:, idx])
+  newPos = cllIndex(cll, newPt)
   if oldPos == newPos
     return nothing
   end
@@ -116,27 +146,37 @@ function cllModify!(cll::CellLinkedList, idx::Int, newPt::Point)
   nMax = max.(newPt, cll.maxs)
   nMin = min.(newPt, cll.mins)
   if nMax != cll.maxs || nMin != cll.mins
-    newGrid::GridType = cllCreateEmptyGrid(cllCubeCount(nMax, nMin, cll.EPS))
-    cllRecreateGrid!(cll.grid, newGrid, nMin, cll.EPS)
+    newGrid::Array{LinkedList{Int}, size(newPt, 1)} = cllCreateEmptyGrid(cllCubeCount(nMax, nMin, cll.EPS))
+    cllRecreateGrid!(cll, newGrid)
     cll.grid = newGrid
     cll.maxs = nMax
     cll.mins = nMin
+    newPos = cllIndex(cll, newPt)
   end
-  newPos = cllIndex(cll, newPt)
   
   cll.grid[newPos...] = cons(idx, cll.grid[newPos...])
+  return nothing
 end
 
+"""
+Obtains the indices of points, that are within `d` from `pt`.
+"""
 function cllInrange(cll::CellLinkedList, pt::Point, d::Real = cll.EPS)
-  # TODO: pt is outside grid
   pos = Tuple(cllIndex(cll, pt))
-  cnt = d / cll.EPS
-  from = CartesianIndex(pos) - cnt
-  to = CartesianIndex(pos) + cnt
+  cnt::Int = ceil(d / cll.EPS)
+  from = CartesianIndex(pos .- cnt)
+  to = CartesianIndex(pos .+ cnt)
   res::Vector{Int} = []
+  oneT = pos .- pos .+ 1
   for c in CartesianRange(from, to)
-    for p in c
-      if norm(data[p] - pt) < d + 1e-9
+    if true in (size(cll.grid) .< c.I)
+      continue
+    end
+    if true in (c.I .< oneT)
+      continue
+    end
+    for p in cll.grid[c]
+      if norm(cll.data[p] - pt) < d + 1e-9
         push!(res, p)
       end
     end
