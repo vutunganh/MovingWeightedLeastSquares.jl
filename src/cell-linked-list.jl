@@ -177,7 +177,7 @@ function cllInrange(cll::CellLinkedList, pt::Point, d::Real = cll.EPS)
       continue
     end
     for p in cll.grid[c]
-      if norm(cll.data[p] - pt) < d + 1e-9
+      if norm(cll.data[:, p] - pt) < d + d / 1e6 # <=
         push!(res, p)
       end
     end
