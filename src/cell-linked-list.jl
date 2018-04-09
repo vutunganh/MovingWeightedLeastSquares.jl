@@ -16,10 +16,11 @@ end
 
 """
 Calculates the amount of cubes in the grid.
+A cell linked list with the resulting amount of cubes will be able to hold any vector `v` where `v .<= maxs` and `v .>= mins`.
 """
 function cllCubeCount(maxs::Vector{T}, mins::Vector{T}, EPS::Real) where {T <: Real}
   size(maxs, 1) != size(mins, 1) && throw(DimensionMismatch())
-  return [Int(ceil(maxs[i] / EPS) - floor(mins[i] / EPS)) for i in 1:size(maxs, 1)]
+  return [Int(ceil(maxs[i] / EPS) - floor(mins[i] / EPS)) for i in 1:size(maxs, 1)] + 1
 end
 
 """
