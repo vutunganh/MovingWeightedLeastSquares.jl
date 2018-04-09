@@ -1,4 +1,7 @@
 """
+Cell linked list splits the vector space a regular grid with edge length `EPS`.
+
+
 # Attributes
 - `data::Array{T, 2} where {T <: Real}`: an array holding the original data
 - `grid::Array{LinkedList{T}} where {T <: Int}`: the gridded space
@@ -31,21 +34,22 @@ function cllCreateEmptyGrid(cubes::Vector{Int})
 end
 
 """
-Finds points index in the grid of `cll`.
+Finds point's index in the grid of `cll`.
 """
 function cllIndex(cll::CellLinkedList, pt::Point)
   return cllIndex(cll.mins, cll.EPS, pt)
 end
 
 """
-Finds points index in the grid given by `mins` and `EPS`.
+Finds point's index in the grid given by `mins` and `EPS`.
 """
 function cllIndex(mins::Vector{T}, EPS::Real, pt::Point) where {T <: Real}
   return Int.(floor.((pt - mins) / EPS)) + 1
 end
 
 """
-Some operations on the CLL might increase the size of the gridded space. Instead of recreating a new CLL, we reuse the already created lists assuming that `EPS` hasn't changed.
+Some operations on the CLL might increase the size of the gridded space.
+Instead of recreating a new CLL, we reuse the already created lists assuming that `EPS` hasn't changed.
 """
 function cllRecreateGrid!(cll::CellLinkedList,
                           newGrid::Array{LinkedList{T}}) where {T <: Int}
@@ -55,13 +59,15 @@ function cllRecreateGrid!(cll::CellLinkedList,
     pos = cllIndex(cll.mins, cll.EPS, cll.data[:, head(l)])
     newGrid[pos...] = l
   end
+  return nothing
 end
 
 """
 Each point is in a single column.
 
-`EPS` is the edge length of each hypercube of the cell linked list.
-Also `EPS` will be used by default, when searching for neighbors.
+# Arguments
+- `data::Array{T} where {T <: Real}`: a 2d array with data, where each vector is in a single column,
+- `EPS::Real`: the edge length of the regular grid.
 """
 function CellLinkedList(data::Array{T, 2}, EPS::Real) where {T <: Real}
   dim = size(data, 1)
@@ -100,7 +106,7 @@ function cllAdd!(cll::CellLinkedList, pt::Point)
 end
 
 """
-Removes a point from the its respective linked list. It remains in `data`.
+Removes a point from the its cell.  It remains in `data`.
 """
 function cllRemoveIdx(cll::CellLinkedList, idx::Int, pos)
   h = cll.grid[pos...]
@@ -118,6 +124,7 @@ function cllRemoveIdx(cll::CellLinkedList, idx::Int, pos)
       end
     end
   end
+  return nothing
 end
 
 """
@@ -131,6 +138,7 @@ function cllRemove!(cll::CellLinkedList, idx::Int)
 
   pos = cll.index(data[:, idx])
   cllRemoveIdx(cll, idx, pos)
+  return nothing
 end
 
 """
@@ -147,7 +155,8 @@ function cllModify!(cll::CellLinkedList, idx::Int, newPt::Point)
   nMax = max.(newPt, cll.maxs)
   nMin = min.(newPt, cll.mins)
   if nMax != cll.maxs || nMin != cll.mins
-    newGrid::Array{LinkedList{Int}, size(newPt, 1)} = cllCreateEmptyGrid(cllCubeCount(nMax, nMin, cll.EPS))
+    newGrid::Array{LinkedList{Int}, size(newPt, 1)} =
+      cllCreateEmptyGrid(cllCubeCount(nMax, nMin, cll.EPS))
     cllRecreateGrid!(cll, newGrid)
     cll.grid = newGrid
     cll.maxs = nMax
@@ -160,7 +169,7 @@ function cllModify!(cll::CellLinkedList, idx::Int, newPt::Point)
 end
 
 """
-Obtains the indices of points, that are within `d` from `pt`.
+Obtains the indices of `cll.data` of points, that are within `d` from `pt`.
 """
 function cllInrange(cll::CellLinkedList, pt::Point, d::Real = cll.EPS)
   pos = Tuple(cllIndex(cll, pt))
@@ -169,6 +178,7 @@ function cllInrange(cll::CellLinkedList, pt::Point, d::Real = cll.EPS)
   to = CartesianIndex(pos .+ cnt)
   res::Vector{Int} = []
   oneT = pos .- pos .+ 1
+
   for c in CartesianRange(from, to)
     if true in (size(cll.grid) .< c.I)
       continue
