@@ -86,21 +86,22 @@ end
 end
 
 @testset "2d approximation" begin
-  l = collect(-2:0.1:2);
+  l = collect(-2:0.2:2);
   ins = transpose(hcat(collect.(collect(product(l, l))[:])...));
   func = (x, y) -> sin(x) + exp(-y^2)
   fs = [func(ins[i, 1], ins[i, 2]) for i in 1:size(ins, 1)]
 
-  m = mwlsKd(ins, fs, 1, (d, eps) -> exp(-d^2))
-  cll = mwlsCll(hcat(ins, fs), 1, (d, eps) -> exp(-d^2))
+  m = mwlsKd(ins, fs, 2, (d, eps) -> exp(-d^2), maxDegree = 3)
+  cll = mwlsCll(hcat(ins, fs), 2, (d, eps) -> exp(-d^2), maxDegree = 3)
   testStatus = true
   for i in size(ins, 1)
-    testStatus &= isapprox(m(ins[i, 1], ins[i, 2]),
+    testStatus &= isapprox(m([ins[i, 1], ins[i, 2]]),
                            func(ins[i, 1], ins[i, 2]),
                            atol = 0.2)
     if !testStatus
+      @show i
       @show ins[i, :]
-      @show m(ins[i, 1], ins[i, 2])
+      @show m([ins[i, 1], ins[i, 2]])
       @show func(ins[i, 1], ins[i, 2])
       break
     end
@@ -108,12 +109,13 @@ end
   @test testStatus == true
 
   for i in size(ins, 1)
-    testStatus &= isapprox(cll(ins[i, 1], ins[i, 2]),
+    testStatus &= isapprox(cll([ins[i, 1], ins[i, 2]]),
                            func(ins[i, 1], ins[i, 2]),
                            atol = 0.3)
     if !testStatus
+      @show i
       @show ins[i, :]
-      @show m(ins[i, 1], ins[i, 2])
+      @show m([ins[i, 1], ins[i, 2]])
       @show func(ins[i, 1], ins[i, 2])
       break
     end
