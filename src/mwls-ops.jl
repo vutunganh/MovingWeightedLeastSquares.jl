@@ -1,5 +1,30 @@
-function getInrangeData(obj::MwlsObject, inPt::Point, dist::Real = obj.EPS)
+"""
+return the indices of points in range for a MwlsNaiveObject
+"""
+function getInrangeData(obj::MwlsNaiveObject, inPt::Point, dist::Real = obj.EPS)
+  res::Vector{Int} = []
+
+  for p in 1:size(obj.inputs, 2)
+    if norm(obj.inputs[:, p] - inPt) < dist + dist * 1/e-6
+      push!(res, p)
+    end
+  end
+
+  return res
+end
+
+"""
+returns the indices of points in range for a MwlsKdObject
+"""
+function getInrangeData(obj::MwlsKdObject, inPt::Point, dist::Real = obj.EPS)
   return inrange(obj.tree, inPt, dist)
+end
+
+"""
+returns the indices of points in range for a MwlsCllObject
+"""
+function getInrangeData(obj::MwlsCllObject, inPt::Point, dist::Real = obj.EPS)
+  return cllInrange(obj.cll, inPt, dist)
 end
 
 """
@@ -34,20 +59,42 @@ function calcMwlsCoefficients(obj::MwlsObject, inPt::Point, dist::Real = obj.EPS
   return result
 end
 
-"""
-    `(obj::MwlsObject)(inputPoint::Point, dist::Float64)`
-
-Approximates the `MwlsObject` at `inputPoint`.
-`dist` determines the method's distance threshold around `inPt`.
-"""
-function (obj::MwlsObject)(inPt::Point, dist = obj.EPS)
+function approximate(obj::MwlsObject, inPt::Point, dist = obj.EPS)
   cs = calcMwlsCoefficients(obj, inPt, dist)
   poly = [polynomial(cs[:, i], obj.b) for i in 1:size(cs, 2)]
   res = [p(obj.vars => inPt) for p in poly]
   return length(res) == 1 ? res[1] : res
 end
 
-function (obj::MwlsObject)(inPt::Real, dist = obj.EPS)
+function (obj::MwlsNaiveObject)(inPt::Point, dist = obj.EPS)
+  approximate(obj, inPt, dist)
+end
+
+"""
+    `(obj::MwlsObject)(inputPoint::Point, dist::Float64)`
+
+Approximates the `MwlsObject` at `inputPoint`.
+`dist` determines the method's distance threshold around `inPt`.
+"""
+function (obj::MwlsKdObject)(inPt::Point, dist = obj.EPS)
+  approximate(obj, inPt, dist)
+end
+
+function (obj::MwlsKdObject)(inPt::Real, dist = obj.EPS)
+  return obj([inPt, 0], dist)
+end
+
+"""
+    `(obj::MwlsObject)(inputPoint::Point, dist::Float64)`
+
+Approximates the `MwlsObject` at `inputPoint`.
+`dist` determines the method's distance threshold around `inPt`.
+"""
+function (obj::MwlsCllObject)(inPt::Point, dist = obj.EPS)
+  approximate(obj, inPt, dist)
+end
+
+function (obj::MwlsCllObject)(inPt::Real, dist = obj.EPS)
   return obj([inPt, 0], dist)
 end
 
