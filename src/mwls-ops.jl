@@ -115,21 +115,21 @@ function calcDiffMwlsPolys(obj::MwlsObject, inPt::Point, dirs::NTuple{N, Int64};
 end
 
 "this function exists, because writing a 1d point is cumbersome"
-function diff(obj::MwlsObject, inPt::Real, dirs::Int; dist = obj.EPS)
-  diff(obj, [inPt, 0], Tuple(dirs); dist = dist)
+function mwlsDiff(obj::MwlsObject, inPt::Real, dirs::Int; dist = obj.EPS)
+  mwlsDiff(obj, [inPt, 0], Tuple(dirs); dist = dist)
 end
 
 "this function exists, because writing a tuple literal with a single element is difficult"
-function diff(obj::MwlsObject, inPt::Point, dirs::Int; dist = obj.EPS)
-  diff(obj, inPt, Tuple(dirs); dist = dist)
+function mwlsDiff(obj::MwlsObject, inPt::Point, dirs::Int; dist = obj.EPS)
+  mwlsDiff(obj, inPt, Tuple(dirs); dist = dist)
 end
 
 """
-    `diff(obj::MwlsObject, inPt::Point, dirs::NTuple{N, Int64}; dist = obj.EPS)`
+    `mwlsDiff(obj::MwlsObject, inPt::Point, dirs::NTuple{N, Int64}; dist = obj.EPS)`
 
 Calculates the approximated derivative at `inPt`, where `x[i]` is differentiated `dirs[i]` times.
 """
-function diff(obj::MwlsObject, inPt::Point, dirs::NTuple{N, Int}; dist = obj.EPS) where {N}
+function mwlsDiff(obj::MwlsObject, inPt::Point, dirs::NTuple{N, Int}; dist = obj.EPS) where {N}
   N != length(obj.vars) && error("Mismatch between tuple size and amount of variables")
   pl = calcDiffMwlsPolys(obj, inPt, dirs; dist = dist)
   res = [p(obj.vars => inPt) for p in pl]
