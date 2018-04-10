@@ -59,9 +59,9 @@ Calculates the differentiated polynomials in each direction.
 function calcDiffMwlsPolys(obj::MwlsObject, inPt::Point, dirs::NTuple{N, Int64}; dist = obj.EPS) where {N}
   cs = calcMwlsCoefficients(obj, inPt, dist)
   poly = [polynomial(cs[:, i], obj.b) for i in 1:size(cs, 2)]
-  for p in poly
+  for j in 1:length(poly)
     for i in 1:length(dirs)
-      p = differentiate(p, obj.vars[i], dirs[i])
+      poly[j] = differentiate(poly[j], obj.vars[i], dirs[i])
     end
   end
   return poly
