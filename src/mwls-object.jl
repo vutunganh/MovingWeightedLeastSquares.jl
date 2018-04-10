@@ -20,20 +20,19 @@ struct MwlsNaiveObject <: MwlsObject
   EPS::Real
   weightFunc::Function
   vars::Vector{PolyVar{true}}
-  b::Array{Monomial{true}}
+  b::Vector{Monomial{true}}
   matrix::Array{Term{true, Int}, 2}
 end
 
 function MwlsNaiveObject(inputs, outputs, EPS, weightFunc, vars, b)
   t = transpose(inputs)
   o = transpose(outputs)
-  return MwlsNaiveObject(t, o, EPS, weightFunc,
-                         vars, b, b * transpose(b))
+  return MwlsNaiveObject(t, o, EPS, weightFunc, vars, b, b * transpose(b))
 end
 
-function mwlsNaive(inputs::Array{T, N}, outputs::Array{T, M},
+function mwlsNaive(inputs::Array{T, N}, outputs::Array{U, M},
                    EPS::Real, weightFunc::Function;
-                   maxDegree::Int = 2) where {T <: Real, N, M}
+                   maxDegree::Int = 2) where {T <: Real, U <: Real, N, M}
   size(outputs, 1) != size(inputs, 1) &&
     error("The amount of inputs and outputs differs")
 
@@ -51,7 +50,7 @@ function mwlsNaive(input::Array{T, 2}, EPS::Real, weightFunc::Function;
   return mwlsNaive(input[:, inputEnd == 1 ? 1 : 1:inputEnd],
                    input[:, outputStart == width ? width : outputStart:width],
                    EPS, weightFunc,
-                   leafSize = leafSize, maxDegree = maxDegree)
+                   maxDegree = maxDegree)
 end
 
 """
@@ -75,18 +74,18 @@ struct MwlsKdObject <: MwlsObject
   EPS::Real
   weightFunc::Function
   vars::Vector{PolyVar{true}}
-  b::Array{Monomial{true}}
+  b::Vector{Monomial{true}}
   matrix::Array{Term{true, Int}, 2}
   tree::KDTree
 end
 
-function MwlsKdObject(inputs, outputs, EPS, weightFunc,
-                      vars, b; leafSize = 10)
+function MwlsKdObject(inputs, outputs, EPS, weightFunc, vars, b;
+                      leafSize::Int = 10)
   t = transpose(inputs)
   o = transpose(outputs)
   return MwlsKdObject(t, o, EPS, weightFunc,
                       vars, b, b * transpose(b),
-                      KDTree(t; leafsize = leafSize))
+                      KDTree(t, leafsize = leafSize))
 end
 
 """
@@ -102,9 +101,9 @@ Creates MwlsKdObject from inputs, outputs, ϵ and a weighting function. Euclidea
 - `leafSize::Int64`: the size of the leaves in the kd-tree, 10 by default.
 - `maxDegree::Int64`: the maximal degree of each polynomial term in the method, 2 by default.
 """
-function mwlsKd(inputs::Array{T, N}, outputs::Array{T, M},
+function mwlsKd(inputs::Array{T, N}, outputs::Array{U},
                 EPS::Real, weightFunc::Function;
-                leafSize::Int = 10, maxDegree::Int = 2) where {T <: Real, N, M}
+                leafSize::Int = 10, maxDegree::Int = 2) where {T <: Real, U <: Real, N}
   size(outputs, 1) != size(inputs, 1) &&
     error("The amount of inputs and outputs differs.")
 
@@ -120,7 +119,8 @@ In this mwlsKd function, the inputs and outupts are passed in a single array.
 It is assumed that each pair of input and output is on a single row.
 Dimension of the output is specified with kwarg `outputDim`.
 """
-function mwlsKd(input::Array{T, 2}, EPS::Real, weightFunc::Function; outputDim::Int = 1, leafSize::Int = 10, maxDegree::Int = 2) where {T <: Real}
+function mwlsKd(input::Array{T, 2}, EPS::Real, weightFunc::Function;
+                outputDim::Int = 1, leafSize::Int = 10, maxDegree::Int = 2) where {T <: Real}
   width = size(input, 2)
   inputEnd = width - outputDim
   outputStart = inputEnd + 1
@@ -151,7 +151,7 @@ mutable struct MwlsCllObject <: MwlsObject
   EPS::Real
   weightFunc::Function
   vars::Vector{PolyVar{true}}
-  b::Array{Monomial{true}}
+  b::Vector{Monomial{true}}
   matrix::Array{Term{true, Int}, 2}
   cll::CellLinkedList
 end
@@ -176,7 +176,9 @@ Creates MwlsCllObject from inputs, outputs, ϵ and a weighting function. Euclide
 # Keyword arguments
 - `maxDegree::Int64`: the maximal degree of each polynomial term in the method, 2 by default.
 """
-function mwlsCll(inputs::Array{T, N}, outputs::Array{T, M}, EPS::Real, weightFunc::Function; maxDegree::Int = 2) where {T <: Real, N, M}
+function mwlsCll(inputs::Array{T, N}, outputs::Array{U},
+                 EPS::Real, weightFunc::Function;
+                 maxDegree::Int = 2) where {T <: Real, U <: Real, N}
   size(outputs, 1) != size(inputs, 1) &&
     error("The amount of inputs and outputs differs.")
 
@@ -192,7 +194,8 @@ In this mwlsCll function, the inputs and outupts are passed in a single array.
 It is assumed that each pair of input and output is on a single row.
 Dimension of the output is specified with kwarg `outputDim`.
 """
-function mwlsCll(input::Array{T, 2}, EPS::Real, weightFunc::Function; outputDim::Int = 1, maxDegree::Int = 2) where {T <: Real}
+function mwlsCll(input::Array{T, 2}, EPS::Real, weightFunc::Function;
+                 outputDim::Int = 1, maxDegree::Int = 2) where {T <: Real}
   width = size(input, 2)
   inputEnd = width - outputDim
   outputStart = inputEnd + 1
