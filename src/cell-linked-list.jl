@@ -177,15 +177,11 @@ function cllInrange(cll::CellLinkedList, pt::Point, d::Real = cll.EPS)
   from = CartesianIndex(pos .- cnt)
   to = CartesianIndex(pos .+ cnt)
   res::Vector{Int} = []
-  oneT = pos .- pos .+ 1
+  oneT = Int.(ones(length(pos)))
 
   for c in CartesianRange(from, to)
-    if true in (size(cll.grid) .< c.I)
-      continue
-    end
-    if true in (c.I .< oneT)
-      continue
-    end
+    true in (size(cll.grid) .< c.I) && continue
+    true in (c.I .< oneT) && continue
     for p in cll.grid[c]
       if norm(cll.data[:, p] - pt) < d + d / 1e6 # <=
         push!(res, p)
