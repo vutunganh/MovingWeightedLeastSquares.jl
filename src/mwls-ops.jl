@@ -4,7 +4,7 @@ return the indices of points in range for a MwlsNaiveObject
 function getInrangeData(obj::MwlsNaiveObject, inPt::Point, dist::Real = obj.EPS)
   res::Vector{Int} = []
 
-  for p in 1:size(obj.inputs, 2)
+  @inbounds for p in 1:size(obj.inputs, 2)
     if norm(obj.inputs[:, p] - inPt) < dist + dist * 1/e-6
       push!(res, p)
     end
@@ -46,8 +46,8 @@ function calcMwlsCoefficients(obj::MwlsObject, inPt::Point, dist::Real = obj.EPS
   for p in data
     curPt = obj.inputs[:, p]
     w = obj.weightFunc(norm(inPt - curPt), obj.EPS)
-    for j in 1:m
-      for i in 1:m
+    @inbounds for j in 1:m
+      @inbounds for i in 1:m
         firstTerm[i, j] += w * obj.matrix[i, j](obj.vars => curPt)
       end
       tmp = w * obj.b[j](obj.vars => curPt) * obj.outputs[:, p]
@@ -106,8 +106,8 @@ Calculates the differentiated polynomials in each direction.
 function calcDiffMwlsPolys(obj::MwlsObject, inPt::Point, dirs::NTuple{N, Int64}; dist = obj.EPS) where {N}
   cs = calcMwlsCoefficients(obj, inPt, dist)
   poly = [polynomial(cs[:, i], obj.b) for i in 1:size(cs, 2)]
-  for j in 1:length(poly)
-    for i in 1:length(dirs)
+  @inbounds for j in 1:length(poly)
+    @inbounds for i in 1:length(dirs)
       poly[j] = differentiate(poly[j], obj.vars[i], dirs[i])
     end
   end
