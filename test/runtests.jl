@@ -98,13 +98,6 @@ end
     testStatus &= isapprox(m([ins[i, 1], ins[i, 2]]),
                            func(ins[i, 1], ins[i, 2]),
                            atol = 0.2)
-    if !testStatus
-      @show i
-      @show ins[i, :]
-      @show m([ins[i, 1], ins[i, 2]])
-      @show func(ins[i, 1], ins[i, 2])
-      break
-    end
   end
   @test testStatus == true
 
@@ -112,11 +105,44 @@ end
     testStatus &= isapprox(cll([ins[i, 1], ins[i, 2]]),
                            func(ins[i, 1], ins[i, 2]),
                            atol = 0.3)
+  end
+  @test testStatus == true
+end
+
+@testset "2d derivative" begin
+  l = collect(-1.5:0.2:1.5);
+  ins = transpose(hcat(collect.(collect(product(l, l))[:])...));
+  func = (x, y) -> exp(-(x^2 + y^2));
+  dfunc = (x, y) -> 4 * x * y * exp(-(x^2 + y^2));
+  fs = [func(ins[i, 1], ins[i, 2]) for i in 1:size(ins, 1)];
+  dfs = [dfunc(ins[i, 1], ins[i, 2]) for i in 1:size(ins, 1)];
+
+  m = mwlsKd(hcat(ins, fs), 1, (d, eps) -> exp(-d^2), maxDegree = 5)
+  cll = mwlsCll(ins, fs, 1, (d, eps) -> exp(-d^2), maxDegree = 5)
+
+  testStatus = true
+  for i in 1:size(ins, 1)
+    testStatus &= isapprox(mwlsDiff(m, [ins[i, 1], ins[i, 2]], (1, 1)),
+                           dfunc(ins[i, 1], ins[i, 2]),
+                           atol = 0.1)
     if !testStatus
-      @show i
       @show ins[i, :]
-      @show m([ins[i, 1], ins[i, 2]])
-      @show func(ins[i, 1], ins[i, 2])
+      @show mwlsDiff(m, [ins[i, 1], ins[i, 2]], (1, 1))
+      @show dfunc(ins[i, 1], ins[i, 2])
+      break
+    end
+  end
+  @test testStatus == true
+
+  testStatus = true
+  for i in 1:size(ins, 1)
+    testStatus &= isapprox(mwlsDiff(cll, [ins[i, 1], ins[i, 2]], (1, 1)),
+                           dfunc(ins[i, 1], ins[i, 2]),
+                           atol = 0.1)
+    if !testStatus
+      @show ins[i, :]
+      @show mwlsDiff(m, [ins[i, 1], ins[i, 2]], (1, 1))
+      @show dfunc(ins[i, 1], ins[i, 2])
       break
     end
   end
