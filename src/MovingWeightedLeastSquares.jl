@@ -9,8 +9,6 @@ using NearestNeighbors
 using DataStructures
 using Plots
 
-export readData
-include("io.jl")
 include("polynomial-generator.jl")
 export WlsObject, wls, calcWlsCoefficients, plotWls
 include("wls-object.jl")
