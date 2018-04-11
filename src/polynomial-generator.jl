@@ -13,10 +13,13 @@ In general, the amount of terms is given by `{variableCount + maxDegree \choose 
 """
 function generateMonomials(variableCount::Int, maxDegree::Int)
   vars = @polyvar x[1:variableCount]
-  if variableCount < 1 || maxDegree < 1
+  if variableCount < 0 || maxDegree < 0
     error("Cannot generate a polynomial with negative dimensions")
   end
   monomials::Vector{Monomial{true}} = [constantterm(1, sum(vars))]
+  if maxDegree == 0
+    return vars, monomials
+  end
 
   for v in vars
     tmpMonomials::Vector{Monomial{true}} = []
