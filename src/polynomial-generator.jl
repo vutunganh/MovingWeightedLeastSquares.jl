@@ -17,14 +17,11 @@ function generateMonomials(variableCount::Int, maxDegree::Int)
     error("Cannot generate a polynomial with negative dimensions")
   end
   monomials::Vector{Monomial{true}} = [constantterm(1, sum(vars))]
-  if maxDegree == 0
-    return vars, monomials
-  end
 
   for v in vars
     tmpMonomials::Vector{Monomial{true}} = []
     for done in monomials
-      for d in 1:maxDegree
+      @inbounds for d in 1:maxDegree
         tmp::Monomial{true} = done * v^d
         if degree(tmp) > maxDegree
           break
