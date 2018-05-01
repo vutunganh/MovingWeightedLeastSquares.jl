@@ -50,8 +50,7 @@ function calcMwlsCoefficients(obj::MwlsObject, inPt::Point, dist::Real = obj.EPS
       @inbounds for i in 1:m
         firstTerm[i, j] += w * obj.matrix[i, j](obj.vars => curPt)
       end
-      tmp = w * obj.b[j](obj.vars => curPt) * obj.outputs[:, p]
-      secondTerm[:, j] += tmp
+      secondTerm[:, j] += w * obj.b[j](obj.vars => curPt) * obj.outputs[:, p]
     end
   end
 
