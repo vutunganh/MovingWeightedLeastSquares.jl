@@ -145,7 +145,7 @@ If created by the `mwls` function, the attributes in this section are created au
 - `matrix`: the result of `b * transpose(b)`,
 - `cll`: a cell linked list for nearest neighbor search.
 """
-mutable struct MwlsCllObject <: MwlsObject
+struct MwlsCllObject <: MwlsObject
   inputs::Array{Real, 2}
   outputs::Array{Real, N} where {N} # accepts both scalar and vector outputs
   EPS::Real

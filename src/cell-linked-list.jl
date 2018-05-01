@@ -9,7 +9,7 @@ Cell linked list splits the vector space a regular grid with edge length `EPS`.
 - `maxs::Vector{T} where {T <: Real}`: stores the maximal coordinate over all data
 - `mins::Vector{T} where {T <: Real}`: stores the minimal coordinate over all data
 """
-mutable struct CellLinkedList
+struct CellLinkedList
   data::Array{T, 2} where {T <: Real}
   grid::Array{LinkedList{T}} where {T <: Int}
   EPS::Real
@@ -76,7 +76,7 @@ function CellLinkedList(data::Array{T, 2}, EPS::Real) where {T <: Real}
   mins = [minimum(data[i, :]) for i in 1:dim]
   grid::Array{LinkedList{Int}, dim} = cllCreateEmptyGrid(cllCubeCount(maxs, mins, EPS))
 
-  for i in 1:cnt
+  @inbounds for i in 1:cnt
     cur = data[:, i]
     pos = cllIndex(mins, EPS, cur)
     grid[pos...] = cons(i, grid[pos...])
