@@ -23,7 +23,7 @@ A cell linked list with the resulting amount of cubes will be able to hold any v
 """
 function cllCubeCount(maxs::Vector{T}, mins::Vector{T}, EPS::Real) where {T <: Real}
   size(maxs, 1) != size(mins, 1) && throw(DimensionMismatch())
-  return [Int(ceil(maxs[i] / EPS) - floor(mins[i] / EPS)) for i in 1:size(maxs, 1)] + 1
+  return [Int(floor(maxs[i] / EPS) - floor(mins[i] / EPS)) for i in 1:size(maxs, 1)] + 1
 end
 
 """
@@ -174,8 +174,9 @@ Obtains the indices of `cll.data` of points, that are within `d` from `pt`.
 function cllInrange(cll::CellLinkedList, pt::Point, d::Real = cll.EPS)
   pos = Tuple(cllIndex(cll, pt))
   cnt::Int = ceil(d / cll.EPS)
-  from = CartesianIndex(pos .- cnt)
-  to = CartesianIndex(pos .+ cnt)
+  # TODO: max and min can be outside cll
+  from = CartesianIndex(max.(1, pos .- cnt))
+  to = CartesianIndex(min.(pos .+ cnt, size(cll.grid)))
   res::Vector{Int} = []
   oneT = Int.(ones(length(pos)))
 
