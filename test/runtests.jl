@@ -18,6 +18,12 @@ include("sample-generator.jl")
     cllRes = cllInrange(cll, pt, r)
     naiveRes = [p for p in 1:size(dataset, 2) if norm(pt - dataset[:, p]) < r + 1e-9]
     testStatus &= sort(cllRes) == sort(naiveRes)
+    if !testStatus
+      @show dataset
+      @show pt
+      @show r
+      break
+    end
   end
   @test testStatus == true
 end
