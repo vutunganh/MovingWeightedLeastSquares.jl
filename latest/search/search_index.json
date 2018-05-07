@@ -1,0 +1,24 @@
+{
+    "docs": [
+        {
+            "location": "/", 
+            "text": "Introduction\n\n\n\n\nOverview\n\n\nMovingWeightedLeastSquares.jl is a package that provides an implementation of the moving weighted least squares.\n\n\n\n\nConstructors", 
+            "title": "Home"
+        }, 
+        {
+            "location": "/#introduction", 
+            "text": "", 
+            "title": "Introduction"
+        }, 
+        {
+            "location": "/#overview", 
+            "text": "MovingWeightedLeastSquares.jl is a package that provides an implementation of the moving weighted least squares.", 
+            "title": "Overview"
+        }, 
+        {
+            "location": "/#constructors", 
+            "text": "", 
+            "title": "Constructors"
+        }
+    ]
+}
