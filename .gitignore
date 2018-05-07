@@ -2,3 +2,4 @@
 *.csv
 *.cov
 .ipynb_checkpoints/
+site/
