@@ -2,4 +2,5 @@
 *.csv
 *.cov
 .ipynb_checkpoints/
-site/
+docs/site/
+docs/build/
