@@ -169,27 +169,68 @@ function cllModify!(cll::CellLinkedList, idx::Int, newPt::Point)
 end
 
 """
+Precalculates the cells, which need to be checked in cllInrange.
+
+### Example
+`cllIteratedCells(e::Real, d::Real)`
+"""
+function cllIteratedCells(edge::Real, dist::Real, dim::Integer)
+  dim < 1 && error("dimension has to be at least 1")
+  dist < 0 && error("distance has to be a positive")
+  edge <= 0 && error("edge length has to be positive")
+  r = Int(ceil(dist / edge))
+  to = fill(r, dim)
+  from = -to
+  res = []
+  for c in CartesianRange(CartesianIndex(tuple(from...)), CartesianIndex(tuple(to...)))
+    tmp = collect(c.I)
+    if norm(tmp) > dist
+      continue
+    end
+    push!(res, tmp)
+  end
+  return res
+end
+
+"""
 Obtains the indices of `cll.data` of points, that are within `d` from `pt`.
 """
 function cllInrange(cll::CellLinkedList, pt::Point, d::Real = cll.EPS)
-  pos = Tuple(cllIndex(cll, pt))
-  cnt::Int = ceil(d / cll.EPS)
-  # TODO: max and min can be outside cll
-  from = CartesianIndex(max.(1, pos .- cnt))
-  to = CartesianIndex(min.(pos .+ cnt, size(cll.grid)))
+  neighbors = cllIteratedCells(cll.EPS, d, size(cll.mins, 1))
+  ptCell = cllIndex(cll, pt)
   res::Vector{Int} = []
-  oneT = Int.(ones(length(pos)))
-
-  for c in CartesianRange(from, to)
-    true in (size(cll.grid) .< c.I) && continue
-    true in (c.I .< oneT) && continue
-    for p in cll.grid[c]
-      if norm(cll.data[:, p] - pt) < d + d / 1e6 # <=
+  for c in neighbors
+    cur = ptCell + c
+    if any(cur .< 1)
+      continue
+    end
+    if any(cur .> collect(size(cll.grid)))
+      continue
+    end
+    for p in cll.grid[cur...]
+      if norm(cll.data[:, p] - pt) < d + d / 1e9
         push!(res, p)
       end
     end
   end
-  
   return res
+  #= pos = Tuple(cllIndex(cll, pt)) =#
+  #= cnt::Int = ceil(d / cll.EPS) =#
+  #= # TODO: max and min can be outside cll =#
+  #= from = CartesianIndex(max.(1, pos .- cnt)) =#
+  #= to = CartesianIndex(min.(pos .+ cnt, size(cll.grid))) =#
+  #= oneT = Int.(ones(length(pos))) =#
+
+  #= for c in CartesianRange(from, to) =#
+  #=   true in (size(cll.grid) .< c.I) && continue =#
+  #=   true in (c.I .< oneT) && continue =#
+  #=   for p in cll.grid[c] =#
+  #=     if norm(cll.data[:, p] - pt) < d + d / 1e6 # <= =#
+  #=       push!(res, p) =#
+  #=     end =#
+  #=   end =#
+  #= end =#
+  
+  #= return res =#
 end
 
