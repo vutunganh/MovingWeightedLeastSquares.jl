@@ -6,5 +6,5 @@
 
 [![Build Status](https://travis-ci.com/vutunganh/MovingWeightedLeastSquares.jl.svg?branch=master)](https://travis-ci.com/vutunganh/MovingWeightedLeastSquares.jl)
 
-[![](https://img.shields.io/badge/docs-stable-blue.svg)](https://USER_NAME.github.io/PACKAGE_NAME.jl/stable)
-[![](https://img.shields.io/badge/docs-latest-blue.svg)](https://USER_NAME.github.io/PACKAGE_NAME.jl/latest)
+[![](https://img.shields.io/badge/docs-stable-blue.svg)](https://vutunganh.github.io/MovingWeightedLeastSquares.jl/stable)
+[![](https://img.shields.io/badge/docs-latest-blue.svg)](https://vutunganh.github.io/MovingWeightedLeastSquares.jl/latest)
