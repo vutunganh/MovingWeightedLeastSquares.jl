@@ -1,5 +1,5 @@
 """
-return the indices of points in range for a MwlsNaiveObject
+Return the indices of sample inputs in `obj` within `dist` from `inPt`.
 """
 function getInrangeData(obj::MwlsNaiveObject, inPt::Point, dist::Real = obj.EPS)
   res::Vector{Int} = []
@@ -14,14 +14,14 @@ function getInrangeData(obj::MwlsNaiveObject, inPt::Point, dist::Real = obj.EPS)
 end
 
 """
-returns the indices of points in range for a MwlsKdObject
+Returns the indices of sample inputs in `obj::MwlsKdObject` within `dist` from `inPt`.
 """
 function getInrangeData(obj::MwlsKdObject, inPt::Point, dist::Real = obj.EPS)
   return inrange(obj.tree, inPt, dist)
 end
 
 """
-returns the indices of points in range for a MwlsCllObject
+Returns the indices of sample inputs in `obj::MwlsCllObject` within `dist` from `inPt`.
 """
 function getInrangeData(obj::MwlsCllObject, inPt::Point, dist::Real = obj.EPS)
   return cllInrange(obj.cll, inPt, dist)
@@ -30,7 +30,7 @@ end
 """
     `calcMwlsCoefficients(obj::MwlsObject, inPt::Point, dist::Float64)`
 
-Calculates the coefficients of the linear combination of the basis for each vector of outputs.
+Calculates the coefficients of the linear combination of basis functions for each dimension of output vectors.
 """
 function calcMwlsCoefficients(obj::MwlsObject, inPt::Point, dist::Real = obj.EPS)
   m = size(obj.b, 1)
@@ -58,6 +58,12 @@ function calcMwlsCoefficients(obj::MwlsObject, inPt::Point, dist::Real = obj.EPS
   return result
 end
 
+"""
+    `approximate(obj::MwlsObject, inPt::Point, dist = obj.EPS)`
+
+Approximates the `MwlsObject` at `inputPoint`.
+If for each sample input ``x_i``, ``\|\text{inPt} - x_i\|`` is greater than `dist`, then the result of the weight function is zero.
+"""
 function approximate(obj::MwlsObject, inPt::Point, dist = obj.EPS)
   cs = calcMwlsCoefficients(obj, inPt, dist)
   poly = [polynomial(cs[:, i], obj.b) for i in 1:size(cs, 2)]
@@ -69,12 +75,10 @@ function (obj::MwlsNaiveObject)(inPt::Point, dist = obj.EPS)
   approximate(obj, inPt, dist)
 end
 
-"""
-    `(obj::MwlsObject)(inputPoint::Point, dist::Float64)`
+function (obj::MwlsNaiveObject)(inPt::Real, dist = obj.EPS)
+  return obj([inPt, 0], dist)
+end
 
-Approximates the `MwlsObject` at `inputPoint`.
-`dist` determines the method's distance threshold around `inPt`.
-"""
 function (obj::MwlsKdObject)(inPt::Point, dist = obj.EPS)
   approximate(obj, inPt, dist)
 end
@@ -83,12 +87,6 @@ function (obj::MwlsKdObject)(inPt::Real, dist = obj.EPS)
   return obj([inPt, 0], dist)
 end
 
-"""
-    `(obj::MwlsObject)(inputPoint::Point, dist::Float64)`
-
-Approximates the `MwlsObject` at `inputPoint`.
-`dist` determines the method's distance threshold around `inPt`.
-"""
 function (obj::MwlsCllObject)(inPt::Point, dist = obj.EPS)
   approximate(obj, inPt, dist)
 end
@@ -99,8 +97,6 @@ end
 
 """
     `calcDiffMwlsPolys(obj::MwlsObject, inPt::Point, dirs::NTuple{N, Int64}; dist = obj.EPS) where {N}`
-
-Calculates the differentiated polynomials in each direction.
 """
 function calcDiffMwlsPolys(obj::MwlsObject, inPt::Point, dirs::NTuple{N, Int64}; dist = obj.EPS) where {N}
   cs = calcMwlsCoefficients(obj, inPt, dist)
