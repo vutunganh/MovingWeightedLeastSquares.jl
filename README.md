@@ -1,10 +1,6 @@
 # Moving weighted least squares
 
-[![build status](https://gitlab.fit.cvut.cz/vutungan/MovingWeightedLeastSquares.jl/badges/master/build.svg)](https://gitlab.fit.cvut.cz/vutungan/MovingWeightedLeastSquares.jl/commits/master)
-
-[![coverage report](https://gitlab.fit.cvut.cz/vutungan/MovingWeightedLeastSquares.jl/badges/master/coverage.svg)](https://gitlab.fit.cvut.cz/vutungan/MovingWeightedLeastSquares.jl/commits/master)
-
 [![Build Status](https://travis-ci.com/vutunganh/MovingWeightedLeastSquares.jl.svg?branch=master)](https://travis-ci.com/vutunganh/MovingWeightedLeastSquares.jl)
-
-[![](https://img.shields.io/badge/docs-stable-blue.svg)](https://vutunganh.github.io/MovingWeightedLeastSquares.jl/stable)
+[![Coverage Status](https://coveralls.io/repos/github/vutunganh/MovingWeightedLeastSquares.jl/badge.svg?branch=master)](https://coveralls.io/github/vutunganh/MovingWeightedLeastSquares.jl?branch=master)
 [![](https://img.shields.io/badge/docs-latest-blue.svg)](https://vutunganh.github.io/MovingWeightedLeastSquares.jl/latest)
+[![](https://img.shields.io/badge/docs-stable-blue.svg)](https://vutunganh.github.io/MovingWeightedLeastSquares.jl/stable)
