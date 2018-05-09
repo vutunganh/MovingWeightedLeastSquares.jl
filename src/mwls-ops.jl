@@ -76,7 +76,7 @@ function (obj::MwlsNaiveObject)(inPt::Point, dist = obj.EPS)
 end
 
 function (obj::MwlsNaiveObject)(inPt::Real, dist = obj.EPS)
-  return obj([inPt, 0], dist)
+  return obj([inPt], dist)
 end
 
 function (obj::MwlsKdObject)(inPt::Point, dist = obj.EPS)
