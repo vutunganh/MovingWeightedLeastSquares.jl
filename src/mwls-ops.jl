@@ -5,7 +5,7 @@ function getInrangeData(obj::MwlsNaiveObject, inPt::Point, dist::Real = obj.EPS)
   res::Vector{Int} = []
 
   @inbounds for p in 1:size(obj.inputs, 2)
-    if norm(obj.inputs[:, p] - inPt) < dist + dist * 1/e-6
+    if norm(obj.inputs[:, p] - inPt) < dist + dist / 1e8
       push!(res, p)
     end
   end
