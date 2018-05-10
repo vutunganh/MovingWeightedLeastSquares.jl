@@ -39,9 +39,6 @@ function calcMwlsCoefficients(obj::MwlsObject, inPt::Point, dist::Real = obj.EPS
   secondTerm = zeros(outputDim, m)
 
   data = getInrangeData(obj, inPt, dist)
-  if length(data) < length(obj.b)
-    return transpose(secondTerm)
-  end
 
   for p in data
     curPt = obj.inputs[:, p]
@@ -52,6 +49,11 @@ function calcMwlsCoefficients(obj::MwlsObject, inPt::Point, dist::Real = obj.EPS
       end
       secondTerm[:, j] += w * obj.b[j](obj.vars => curPt) * obj.outputs[:, p]
     end
+  end
+
+  # probably singular matrix
+  if cond(firstTerm, 1) >= 1e14 || cond(firstTerm, 2) >= 1e14
+    return zeros(m, outputDim)
   end
 
   result = firstTerm \ transpose(secondTerm)
