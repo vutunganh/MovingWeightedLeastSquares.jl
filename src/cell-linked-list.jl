@@ -8,6 +8,8 @@ Cell linked list splits the vector space a regular grid with edge length `EPS`.
 - `EPS::Real`: the edge length of each grid cube
 - `maxs::Vector{T} where {T <: Real}`: stores the maximal coordinate over all data
 - `mins::Vector{T} where {T <: Real}`: stores the minimal coordinate over all data
+- `prevQuery::Real`: skip `cllIteratedCells` in `cllInrange` if `Int(ceil(dist / edge)) == Int(ceil(prevQuery / edge))`
+- `dirs::Vector{T}`: cached vector of neighbor cells
 """
 struct CellLinkedList
   data::Array{T, 2} where {T <: Real}
@@ -15,6 +17,8 @@ struct CellLinkedList
   EPS::Real
   maxs::Vector{T} where {T <: Real}
   mins::Vector{T} where {T <: Real}
+  prevQuery::Real
+  dirs::Vector{Int}
 end
 
 """
@@ -82,7 +86,7 @@ function CellLinkedList(data::Array{T, 2}, EPS::Real) where {T <: Real}
     grid[pos...] = cons(i, grid[pos...])
   end
 
-  return CellLinkedList(data, grid, EPS, maxs, mins)
+  return CellLinkedList(data, grid, EPS, maxs, mins, 0., Vector{Int}())
 end
 
 """
@@ -181,7 +185,7 @@ function cllIteratedCells(edge::Real, dist::Real, dim::Integer)
   r = Int(ceil(dist / edge)) + 1
   to = fill(r, dim)
   from = -to
-  res::Vector{Vector{Integer}} = []
+  res::Vector{Vector{Int}} = []
   for c in CartesianRange(CartesianIndex(tuple(from...)), CartesianIndex(tuple(to...)))
     tmp = collect(c.I)
     n = norm(tmp)
@@ -197,8 +201,12 @@ end
 Obtains the indices of `cll.data` of points, that are within `d` from `pt`.
 """
 function cllInrange(cll::CellLinkedList, pt::Point, d::Real = cll.EPS)
-  neighbors = cllIteratedCells(cll.EPS, d, size(cll.mins, 1))
-  return cllInrange(cll, pt, neighbors, d)
+  if Int(ceil(d / cll.EPS)) == Int(ceil(cll.prevQuery) / cll.EPS)
+    return cllInrange(cll, pt, cll.dirs, d)
+  else
+    neighbors = cllIteratedCells(cll.EPS, d, size(cll.mins, 1))
+    return cllInrange(cll, pt, neighbors, d)
+  end
 end
 
 function cllInrange(cll::CellLinkedList, pt::Point, neighborCellDirs, d::Real = cll.EPS)
