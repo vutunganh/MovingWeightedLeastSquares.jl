@@ -187,12 +187,11 @@ function cllIteratedCells(edge::Real, dist::Real, dim::Integer)
   from = -to
   res::Vector{Vector{Int}} = []
   for c in CartesianRange(CartesianIndex(tuple(from...)), CartesianIndex(tuple(to...)))
-    tmp = collect(c.I)
-    n = norm(tmp)
+    n = sqrt(sum(map(x -> x^2, c.I)))
     if r < n - n / 1e8
       continue
     end
-    push!(res, tmp)
+    push!(res, collect(c.I))
   end
   return res
 end
