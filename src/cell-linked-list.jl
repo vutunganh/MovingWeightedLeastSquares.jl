@@ -183,10 +183,10 @@ function cllIteratedCells(edge::Real, dist::Real, dim::Integer)
   dist <= 0 && error("distance has to be a positive")
   edge <= 0 && error("edge length has to be positive")
   r = Int(ceil(dist / edge)) + 1
-  to = fill(r, dim)
-  from = -to
+  to = ntuple(i -> r, dim)
+  from = .- to
   res::Vector{Vector{Int}} = []
-  for c in CartesianRange(CartesianIndex(tuple(from...)), CartesianIndex(tuple(to...)))
+  for c in CartesianRange(CartesianIndex(from), CartesianIndex(to))
     n = sqrt(sum(map(x -> x^2, c.I)))
     if r < n - n / 1e8
       continue
