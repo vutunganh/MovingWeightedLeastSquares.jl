@@ -111,14 +111,30 @@ function calcDiffMwlsPolys(obj::MwlsObject, inPt::Point, dirs::NTuple{N, Int64};
   return poly
 end
 
-"this function exists, because writing a 1d point is cumbersome"
+function mwlsDiff(obj::MwlsNaiveObject, inPt::Real, dirs::Int; dist = obj.EPS)
+  mwlsDiff(obj, [inPt], ntuple(x -> dirs, 1); dist = dist)
+end
+
+function mwlsDiff(obj::MwlsNaiveObject, inPt::Point, dirs::Int; dist = obj.EPS)
+  mwlsDiff(obj, inPt, ntuple(x -> dirs, 1); dist = dist)
+end
+
+function mwlsDiff(obj::MwlsNaiveObject, inPt::Real, dirs::NTuple{N, Int}; dist = obj.EPS) where {N}
+  mwlsDiff(obj, [inPt], dirs, dist)
+end
+
 function mwlsDiff(obj::MwlsObject, inPt::Real, dirs::Int; dist = obj.EPS)
-  mwlsDiff(obj, [inPt, 0], Tuple(dirs); dist = dist)
+  mwlsDiff(obj, [inPt, 0], ntuple(x -> dirs, 1); dist = dist)
+end
+
+"this function exists, because writing a 1d point is cumbersome"
+function mwlsDiff(obj::MwlsObject, inPt::Real, dirs::NTuple{N, Int}; dist = obj.EPS) where {N}
+  mwlsDiff(obj, [inPt, 0], ntuple(x -> dirs, 1); dist = dist)
 end
 
 "this function exists, because writing a tuple literal with a single element is difficult"
 function mwlsDiff(obj::MwlsObject, inPt::Point, dirs::Int; dist = obj.EPS)
-  mwlsDiff(obj, inPt, Tuple(dirs); dist = dist)
+  mwlsDiff(obj, inPt, ntuple(x -> dirs, 1); dist = dist)
 end
 
 """
