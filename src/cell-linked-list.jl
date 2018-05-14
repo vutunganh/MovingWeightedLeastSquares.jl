@@ -179,9 +179,9 @@ Precalculates the cells, which need to be checked in cllInrange.
 `cllIteratedCells(e::Real, d::Real)`
 """
 function cllIteratedCells(edge::Real, dist::Real, dim::Integer)
-  dim < 1 && error("dimension has to be at least 1")
-  dist <= 0 && error("distance has to be a positive")
-  edge <= 0 && error("edge length has to be positive")
+  dim < 1 && error("dimension has to be at least 1, but it was $dim")
+  (dist < 0 || dist < 1e-9) && error("distance has to be positive, but it was $dist")
+  (edge < 0 || edge < 1e-9) && error("edge length has to be positive, but it was $edge")
   r = Int(ceil(dist / edge)) + 1
   to = ntuple(i -> r, dim)
   from = .- to
