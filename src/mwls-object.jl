@@ -33,6 +33,7 @@ end
 """
 Documentation is left out on purpose to discourage the use of MwlsNaiveObject.
 K-d trees are always faster and cell linked lists are faster on datasets larger than 20.
+`mwlsNaive` has the same signature as `mwlsCll`.
 """
 function mwlsNaive(inputs::Array{T, N}, outputs::Array{U, M},
                    EPS::Real, weightFunc::Function;
@@ -49,6 +50,7 @@ end
 """
 Documentation is left out on purpose to discourage the use of MwlsNaiveObject.
 K-d trees are always faster and cell linked lists are faster on datasets larger than 20.
+`mwlsNaive` has the same signature as `mwlsCll`.
 """
 function mwlsNaive(input::Array{T, 2}, EPS::Real, weightFunc::Function;
                    outputDim::Int = 1, maxDegree::Int = 2) where {T <: Real}
