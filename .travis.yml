@@ -8,6 +8,7 @@ notifications:
 branches:
   only:
     - master
+    - docs
 script:
   - julia -e 'Pkg.clone(pwd()); Pkg.build("MovingWeightedLeastSquares"); Pkg.test("MovingWeightedLeastSquares"; coverage=true)'
 after_success:
