@@ -3,16 +3,16 @@ abstract type MwlsObject end
 """
 # User provided member variables
 - `inputs::Array{Float64, 2}`: a 2d array of input points where each point is in a single column,
-- `outputs::Array{Float64, N}`: a 2d array or a vector of of outputs where each output is in a single column,
-- `EPS::Float64`: ε of the method (default distance threshold for neighbor search),
-- `weightFunc::Function`: weighting function of the method.
+- `outputs::Array{Float64, N}`: a 2d array or a vector of output points where each output is in a single column,
+- `EPS::Float64`: ε of the method (cell edge length and the default distance for range search),
+- `weightFunc::Function`: weighting function θ of the method.
 
 # Automatically created member variables
-If created by the `mwls` function, the member variables in this section are created automatically.
+If created by the `mwlsNaive` function, the member variables in this section are created automatically.
 
 - `vars::Vector{PolyVar{true}}`: variables of the polynomial,
 - `b::Vector{Monomial{true}}`: the basis of the polynomial,
-- `matrix`: the result of `b * transpose(b)`,
+- `matrix`: the result of `b * transpose(b)`.
 """
 struct MwlsNaiveObject <: MwlsObject
   inputs::Array{Real, 2}
@@ -30,6 +30,10 @@ function MwlsNaiveObject(inputs, outputs, EPS, weightFunc, vars, b)
   return MwlsNaiveObject(t, o, EPS, weightFunc, vars, b, b * transpose(b))
 end
 
+"""
+Documentation is left out on purpose to discourage the use of MwlsNaiveObject.
+K-d trees are always faster and cell linked lists are faster on datasets larger than 20.
+"""
 function mwlsNaive(inputs::Array{T, N}, outputs::Array{U, M},
                    EPS::Real, weightFunc::Function;
                    maxDegree::Int = 2) where {T <: Real, U <: Real, N, M}
@@ -42,6 +46,10 @@ function mwlsNaive(inputs::Array{T, N}, outputs::Array{U, M},
   return MwlsNaiveObject(inputs, outputs, EPS, weightFunc, vars, b)
 end
 
+"""
+Documentation is left out on purpose to discourage the use of MwlsNaiveObject.
+K-d trees are always faster and cell linked lists are faster on datasets larger than 20.
+"""
 function mwlsNaive(input::Array{T, 2}, EPS::Real, weightFunc::Function;
                    outputDim::Int = 1, maxDegree::Int = 2) where {T <: Real}
   width = size(input, 2)
@@ -101,7 +109,7 @@ Creates `MwlsKdObject` from sample input and sample output data, the cutoff dist
 - `weightFunc::Function`: weighting function of the method. It should be in form `(distance, EPS) -> Float64`.
 
 # Keyword arguments
-- `leafSize::Int`: the size of the leaves in the k-d tree, 10 by default.
+- `leafSize::Int`: the size of the leaves in the k-d-tree, 10 by default.
 - `maxDegree::Int`: the maximal degree of polynomials used for approximation, 2 by default.
 """
 function mwlsKd(inputs::Array{T, N}, outputs::Array{U},
