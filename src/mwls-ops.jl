@@ -1,6 +1,4 @@
-"""
-Return the indices of sample inputs in `obj` within `dist` from `inPt`.
-"""
+# return the indices of sample inputs in `obj::MwlsNaiveObject` within `dist` from `inPt`
 function getInrangeData(obj::MwlsNaiveObject, inPt::Point, dist::Real = obj.EPS)
   res::Vector{Int} = []
 
@@ -13,16 +11,12 @@ function getInrangeData(obj::MwlsNaiveObject, inPt::Point, dist::Real = obj.EPS)
   return res
 end
 
-"""
-Returns the indices of sample inputs in `obj::MwlsKdObject` within `dist` from `inPt`.
-"""
+# return the indices of sample inputs in `obj::MwlsNaiveObject` within `dist` from `inPt`
 function getInrangeData(obj::MwlsKdObject, inPt::Point, dist::Real = obj.EPS)
   return inrange(obj.tree, inPt, dist)
 end
 
-"""
-Returns the indices of sample inputs in `obj::MwlsCllObject` within `dist` from `inPt`.
-"""
+# return the indices of sample inputs in `obj::MwlsNaiveObject` within `dist` from `inPt`
 function getInrangeData(obj::MwlsCllObject, inPt::Point, dist::Real = obj.EPS)
   return cllInrange(obj.cll, inPt, dist)
 end
