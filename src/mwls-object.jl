@@ -56,17 +56,17 @@ end
 """
 # User provided member variables
 - `inputs::Array{Float64, 2}`: a 2d array of input points where each point is in a single column,
-- `outputs::Array{Float64, N}`: a 2d array or a vector of of outputs where each output is in a single column,
-- `EPS::Float64`: ε of the method (default distance threshold for neighbor search),
-- `weightFunc::Function`: weighting function of the method.
+- `outputs::Array{Float64, N}`: a 2d array or a vector of output points where each output is in a single column,
+- `EPS::Float64`: ε of the method (cell edge length and the default distance for range search),
+- `weightFunc::Function`: weighting function θ of the method.
 
 # Automatically created member variables
-If created by the `mwls` function, the member variables in this section are created automatically.
+If created by the `mwlsCll` function, the member variables in this section are created automatically.
 
 - `vars::Vector{PolyVar{true}}`: variables of the polynomial,
 - `b::Vector{Monomial{true}}`: the basis of the polynomial,
 - `matrix`: the result of `b * transpose(b)`,
-- `tree`: a k-d tree for neareast neighbor search.
+- `tree`: a k-d tree for range search.
 """
 struct MwlsKdObject <: MwlsObject
   inputs::Array{Real, 2}
@@ -89,17 +89,20 @@ function MwlsKdObject(inputs, outputs, EPS, weightFunc, vars, b;
 end
 
 """
-Creates MwlsKdObject from inputs, outputs, ϵ and a weighting function. Euclidean metric is used.
+`mwlsKd(inputs::Array{T, N}, outputs::Array{U}, EPS::Real, weightFunc::Function) where {T <: Real, U <: Real, N}`
+`mwlsKd(inputs::Array{T, N}, outputs::Array{U}, EPS::Real, weightFunc::Function; leafsize::Int = 10, maxDegree::Int = 2) where {T <: Real, U <: Real, N}`
+
+Creates `MwlsKdObject` from sample input and sample output data, the cutoff distance ε and a weighting function θ.
 
 # Arguments
 - `inputs`: a 2d array of input points where each point is on a single row,
 - `outputs`: a 2d array or a vector of output scalars where each output is on a single row,
-- `EPS::Float64`: ε of the method (default distance threshold for neighbor search),
+- `EPS::Real`: ε of the method (default distance threshold for neighbor search),
 - `weightFunc::Function`: weighting function of the method. It should be in form `(distance, EPS) -> Float64`.
 
 # Keyword arguments
-- `leafSize::Int64`: the size of the leaves in the kd-tree, 10 by default.
-- `maxDegree::Int64`: the maximal degree of each polynomial term in the method, 2 by default.
+- `leafSize::Int`: the size of the leaves in the k-d tree, 10 by default.
+- `maxDegree::Int`: the maximal degree of polynomials used for approximation, 2 by default.
 """
 function mwlsKd(inputs::Array{T, N}, outputs::Array{U},
                 EPS::Real, weightFunc::Function;
@@ -115,7 +118,10 @@ function mwlsKd(inputs::Array{T, N}, outputs::Array{U},
 end
 
 """
-In this mwlsKd function, the inputs and outupts are passed in a single array.
+  `mwlsKd(input::Array{T, 2}, EPS::Real, weightFunc::Function) where {T <: Real}`
+  `mwlsKd(input::Array{T, 2}, EPS::Real, weightFunc::Function; outputDim::Int = 1, leafSize::Int = 10, maxDegree::Int = 2) where {T <: Real}`
+
+In this `mwlsKd` function, the sample input and sample output data are passed in a single array.
 It is assumed that each pair of input and output is on a single row.
 Dimension of the output is specified with kwarg `outputDim`.
 """
@@ -165,15 +171,15 @@ function MwlsCllObject(inputs, outputs, EPS, weightFunc, vars, b)
 end
 
 """
-Creates `MwlsCllObject` from sample input and sample output data, the cutoff distance ε and a weighting function.
-
     `mwlsCll(inputs::Array{T, N}, outputs::Array{U}, EPS::Real, weightFunc::Function) where {T <: Real, U <: Real, N}`
     `mwlsCll(inputs::Array{T, N}, outputs::Array{U}, EPS::Real, weightFunc::Function; maxDegree::Int = 2) where {T <: Real, U <: Real, N}`
+
+Creates `MwlsCllObject` from sample input and sample output data, the cutoff distance ε and a weighting function θ.
 
 # Arguments
 - `inputs`: a 2d array of input points where each point is on a single row,
 - `outputs`: a 2d array or a vector of output scalars where each output is on a single row,
-- `EPS::Float64`: ε of the method (cell edge length and the default distance for range search),
+- `EPS::Real`: ε of the method (cell edge length and the default distance for range search),
 - `weightFunc::Function`: weighting function θ of the method. It should be in form `(distance between two vectors, EPS) -> Float64`.
 
 # Keyword arguments
@@ -193,9 +199,10 @@ function mwlsCll(inputs::Array{T, N}, outputs::Array{U},
 end
 
 """
+    `mwlsCll(input::Array{T, 2}, EPS::Real, weightFunc::Function) where {T <: Real}`
     `mwlsCll(input::Array{T, 2}, EPS::Real, weightFunc::Function; outputDim::Int = 1, maxDegree::Int = 2) where {T <: Real}`
 
-In this mwlsCll function, the inputs and outupts are passed in a single array.
+In this `mwlsCll` function, the sample input and sample output data are passed in a single array.
 It is assumed that each pair of input and output is on a single row.
 Dimension of the output is specified with kwarg `outputDim`.
 """
