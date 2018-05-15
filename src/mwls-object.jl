@@ -165,16 +165,19 @@ function MwlsCllObject(inputs, outputs, EPS, weightFunc, vars, b)
 end
 
 """
-Creates MwlsCllObject from inputs, outputs, ϵ and a weighting function. Euclidean metric is used.
+Creates `MwlsCllObject` from sample input and sample output data, the cutoff distance ε and a weighting function.
+
+    `mwlsCll(inputs::Array{T, N}, outputs::Array{U}, EPS::Real, weightFunc::Function) where {T <: Real, U <: Real, N}`
+    `mwlsCll(inputs::Array{T, N}, outputs::Array{U}, EPS::Real, weightFunc::Function; maxDegree::Int = 2) where {T <: Real, U <: Real, N}`
 
 # Arguments
 - `inputs`: a 2d array of input points where each point is on a single row,
 - `outputs`: a 2d array or a vector of output scalars where each output is on a single row,
-- `EPS::Float64`: ε of the method (grid edge length and default distance threshold for neighbor search),
-- `weightFunc::Function`: weighting function of the method. It should be in form `(distance, EPS) -> Float64`.
+- `EPS::Float64`: ε of the method (cell edge length and default distance for range search),
+- `weightFunc::Function`: weighting function θ of the method. It should be in form `(distance between two vectors, EPS) -> Float64`.
 
 # Keyword arguments
-- `maxDegree::Int64`: the maximal degree of each polynomial term in the method, 2 by default.
+- `maxDegree::Int`: the maximal degree of polynomials used for approximation, 2 by default.
 """
 function mwlsCll(inputs::Array{T, N}, outputs::Array{U},
                  EPS::Real, weightFunc::Function;
@@ -190,6 +193,8 @@ function mwlsCll(inputs::Array{T, N}, outputs::Array{U},
 end
 
 """
+    `mwlsCll(input::Array{T, 2}, EPS::Real, weightFunc::Function; outputDim::Int = 1, maxDegree::Int = 2) where {T <: Real}`
+
 In this mwlsCll function, the inputs and outupts are passed in a single array.
 It is assumed that each pair of input and output is on a single row.
 Dimension of the output is specified with kwarg `outputDim`.
@@ -203,4 +208,3 @@ function mwlsCll(input::Array{T, 2}, EPS::Real, weightFunc::Function;
                  input[:, outputStart == width ? width : outputStart:width],
                  EPS, weightFunc, maxDegree = maxDegree)
 end
-
