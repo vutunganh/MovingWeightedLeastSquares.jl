@@ -26,7 +26,9 @@ end
 
 Calculates the coefficients of the linear combination of polynomials used for approximation.
 
-**NOTE**: if the matrix in the system of linear equations used to find the coefficients is singular, then zero coefficients are returned!
+!!! note
+
+If the matrix in the system of linear equations used to find the coefficients is singular, then zero coefficients are returned!
 """
 function calcMwlsCoefficients(obj::MwlsObject, inPt::Point, dist::Real = obj.EPS)
   m = size(obj.b, 1)
@@ -96,7 +98,9 @@ end
 Calculates the coefficients of the linear combination of polynomials used for approximation and differentiates them according to `dirs`.
 For an example ``dirs = (1,2)`` means that the returned coefficients will be coefficients of ``{\partial \over \partial x_1 \partial^2 x_2} P(x)``.
 
-**NOTE**: if the matrix in the system of linear equations used to find the coefficients is singular, then zero coefficients are returned!
+!!! note
+
+If the matrix in the system of linear equations used to find the coefficients is singular, then zero coefficients are returned!
 """
 function calcDiffMwlsPolys(obj::MwlsObject, inPt::Point, dirs::NTuple{N, Int64}; dist::Real = obj.EPS) where {N}
   cs = calcMwlsCoefficients(obj, inPt, dist)
