@@ -22,9 +22,11 @@ function getInrangeData(obj::MwlsCllObject, inPt::Point, dist::Real = obj.EPS)
 end
 
 """
-    `calcMwlsCoefficients(obj::MwlsObject, inPt::Point, dist::Float64)`
+    `calcMwlsCoefficients(obj::MwlsObject, inPt::Point, dist::Real)`
 
-Calculates the coefficients of the linear combination of basis functions for each dimension of output vectors.
+Calculates the coefficients of the linear combination of polynomials used for approximation.
+
+**NOTE**: if the matrix in the system of linear equations used to find the coefficients is singular, then zero coefficients are returned!
 """
 function calcMwlsCoefficients(obj::MwlsObject, inPt::Point, dist::Real = obj.EPS)
   m = size(obj.b, 1)
@@ -55,12 +57,7 @@ function calcMwlsCoefficients(obj::MwlsObject, inPt::Point, dist::Real = obj.EPS
   return result
 end
 
-"""
-    `approximate(obj::MwlsObject, inPt::Point, dist::Real = obj.EPS)`
-
-Approximates the `MwlsObject` at `inputPoint`.
-If for each sample input ``x_i``, ``\|\text{inPt} - x_i\|`` is greater than `dist`, then the result of the weight function is zero.
-"""
+# does the actual approximation
 function approximate(obj::MwlsObject, inPt::Point, dist::Real = obj.EPS)
   cs = calcMwlsCoefficients(obj, inPt, dist)
   poly = [polynomial(cs[:, i], obj.b) for i in 1:size(cs, 2)]
@@ -88,12 +85,18 @@ function (obj::MwlsCllObject)(inPt::Point, dist::Real = obj.EPS)
   approximate(obj, inPt, dist)
 end
 
+# TODO: huh
 function (obj::MwlsCllObject)(inPt::Real, dist::Real = obj.EPS)
   return obj([inPt, 0], dist)
 end
 
 """
     `calcDiffMwlsPolys(obj::MwlsObject, inPt::Point, dirs::NTuple{N, Int64}; dist::Real = obj.EPS) where {N}`
+
+Calculates the coefficients of the linear combination of polynomials used for approximation and differentiates them according to `dirs`.
+For an example ``dirs = (1,2)`` means that the returned coefficients will be coefficients of ``{\partial \over \partial x_1 \partial^2 x_2} P(x)``.
+
+**NOTE**: if the matrix in the system of linear equations used to find the coefficients is singular, then zero coefficients are returned!
 """
 function calcDiffMwlsPolys(obj::MwlsObject, inPt::Point, dirs::NTuple{N, Int64}; dist::Real = obj.EPS) where {N}
   cs = calcMwlsCoefficients(obj, inPt, dist)
@@ -133,7 +136,7 @@ function mwlsDiff(obj::MwlsObject, inPt::Point, dirs::Int; dist::Real = obj.EPS)
 end
 
 """
-    `mwlsDiff(obj::MwlsObject, inPt::Point, dirs::NTuple{N, Int64}; dist = obj.EPS)`
+    `mwlsDiff(obj::MwlsObject, inPt::Point, dirs::NTuple{N, Int64}; dist::Real = obj.EPS)`
 
 Calculates the approximated derivative at `inPt`, where `x[i]` is differentiated `dirs[i]` times.
 """
