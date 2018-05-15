@@ -133,17 +133,17 @@ end
 """
 # User provided member variables
 - `inputs::Array{Float64, 2}`: a 2d array of input points where each point is in a single column,
-- `outputs::Array{Float64, N}`: a 2d array or a vector of of outputs where each output is in a single column,
-- `EPS::Float64`: ε of the method (default distance threshold for neighbor search),
-- `weightFunc::Function`: weighting function of the method.
+- `outputs::Array{Float64, N}`: a 2d array or a vector of output points where each output is in a single column,
+- `EPS::Float64`: ε of the method (cell edge length and the default distance for range search),
+- `weightFunc::Function`: weighting function θ of the method.
 
 # Automatically created member variables
-If created by the `mwls` function, the member variables in this section are created automatically.
+If created by the `mwlsCll` function, the member variables in this section are created automatically.
 
 - `vars::Vector{PolyVar{true}}`: variables of the polynomial,
 - `b::Vector{Monomial{true}}`: the basis of the polynomial,
 - `matrix`: the result of `b * transpose(b)`,
-- `cll`: a cell linked list for nearest neighbor search.
+- `cll`: a cell linked list for range search.
 """
 struct MwlsCllObject <: MwlsObject
   inputs::Array{Real, 2}
@@ -173,7 +173,7 @@ Creates `MwlsCllObject` from sample input and sample output data, the cutoff dis
 # Arguments
 - `inputs`: a 2d array of input points where each point is on a single row,
 - `outputs`: a 2d array or a vector of output scalars where each output is on a single row,
-- `EPS::Float64`: ε of the method (cell edge length and default distance for range search),
+- `EPS::Float64`: ε of the method (cell edge length and the default distance for range search),
 - `weightFunc::Function`: weighting function θ of the method. It should be in form `(distance between two vectors, EPS) -> Float64`.
 
 # Keyword arguments
