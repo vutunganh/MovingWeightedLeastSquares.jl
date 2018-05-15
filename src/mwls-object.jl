@@ -1,14 +1,14 @@
 abstract type MwlsObject end
 
 """
-# User provided attributes
+# User provided member variables
 - `inputs::Array{Float64, 2}`: a 2d array of input points where each point is in a single column,
 - `outputs::Array{Float64, N}`: a 2d array or a vector of of outputs where each output is in a single column,
 - `EPS::Float64`: ε of the method (default distance threshold for neighbor search),
 - `weightFunc::Function`: weighting function of the method.
 
-# Automatically created attributes
-If created by the `mwls` function, the attributes in this section are created automatically.
+# Automatically created member variables
+If created by the `mwls` function, the member variables in this section are created automatically.
 
 - `vars::Vector{PolyVar{true}}`: variables of the polynomial,
 - `b::Vector{Monomial{true}}`: the basis of the polynomial,
@@ -54,14 +54,14 @@ function mwlsNaive(input::Array{T, 2}, EPS::Real, weightFunc::Function;
 end
 
 """
-# User provided attributes
+# User provided member variables
 - `inputs::Array{Float64, 2}`: a 2d array of input points where each point is in a single column,
 - `outputs::Array{Float64, N}`: a 2d array or a vector of of outputs where each output is in a single column,
 - `EPS::Float64`: ε of the method (default distance threshold for neighbor search),
 - `weightFunc::Function`: weighting function of the method.
 
-# Automatically created attributes
-If created by the `mwls` function, the attributes in this section are created automatically.
+# Automatically created member variables
+If created by the `mwls` function, the member variables in this section are created automatically.
 
 - `vars::Vector{PolyVar{true}}`: variables of the polynomial,
 - `b::Vector{Monomial{true}}`: the basis of the polynomial,
@@ -131,14 +131,14 @@ function mwlsKd(input::Array{T, 2}, EPS::Real, weightFunc::Function;
 end
 
 """
-# User provided attributes
+# User provided member variables
 - `inputs::Array{Float64, 2}`: a 2d array of input points where each point is in a single column,
 - `outputs::Array{Float64, N}`: a 2d array or a vector of of outputs where each output is in a single column,
 - `EPS::Float64`: ε of the method (default distance threshold for neighbor search),
 - `weightFunc::Function`: weighting function of the method.
 
-# Automatically created attributes
-If created by the `mwls` function, the attributes in this section are created automatically.
+# Automatically created member variables
+If created by the `mwls` function, the member variables in this section are created automatically.
 
 - `vars::Vector{PolyVar{true}}`: variables of the polynomial,
 - `b::Vector{Monomial{true}}`: the basis of the polynomial,
