@@ -7,7 +7,6 @@ using DynamicPolynomials
 using MultivariatePolynomials
 using NearestNeighbors
 using DataStructures
-using Plots
 
 include("polynomial-generator.jl")
 export WlsObject, wls, calcWlsCoefficients, plotWls
