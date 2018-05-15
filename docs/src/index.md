@@ -22,7 +22,7 @@ If the cell linked list is needed
 
 ## Installation
 
-At the moment this packaged can be installed by manually cloning the package
+At the moment this package can be installed by manually cloning the package
 
 ```
 Pkg.clone("https://github.com/vutunganh/MovingWeightedLeastSquares.jl")
