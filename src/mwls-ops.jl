@@ -28,8 +28,7 @@ Calculates the coefficients of the linear combination of polynomials used for ap
 This is done for each dimension of output data.
 
 !!! note
-
-If the matrix in the system of linear equations used to find the coefficients is singular, then zero coefficients are returned!
+    If the matrix in the system of linear equations used to find the coefficients is singular, then zero coefficients are returned!
 """
 function calcMwlsCoefficients(obj::MwlsObject, inPt::Point, dist::Real = obj.EPS)
   m = size(obj.b, 1)
