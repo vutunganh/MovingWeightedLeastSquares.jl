@@ -1,6 +1,4 @@
-"""
-Return the indices of sample inputs in `obj` within `dist` from `inPt`.
-"""
+# return the indices of sample inputs in `obj::MwlsNaiveObject` within `dist` from `inPt`
 function getInrangeData(obj::MwlsNaiveObject, inPt::Point, dist::Real = obj.EPS)
   res::Vector{Int} = []
 
@@ -13,24 +11,25 @@ function getInrangeData(obj::MwlsNaiveObject, inPt::Point, dist::Real = obj.EPS)
   return res
 end
 
-"""
-Returns the indices of sample inputs in `obj::MwlsKdObject` within `dist` from `inPt`.
-"""
+# return the indices of sample inputs in `obj::MwlsNaiveObject` within `dist` from `inPt`
 function getInrangeData(obj::MwlsKdObject, inPt::Point, dist::Real = obj.EPS)
   return inrange(obj.tree, inPt, dist)
 end
 
-"""
-Returns the indices of sample inputs in `obj::MwlsCllObject` within `dist` from `inPt`.
-"""
+# return the indices of sample inputs in `obj::MwlsNaiveObject` within `dist` from `inPt`
 function getInrangeData(obj::MwlsCllObject, inPt::Point, dist::Real = obj.EPS)
   return cllInrange(obj.cll, inPt, dist)
 end
 
 """
-    `calcMwlsCoefficients(obj::MwlsObject, inPt::Point, dist::Float64)`
+    `calcMwlsCoefficients(obj::MwlsObject, inPt::Point, dist::Real)`
 
-Calculates the coefficients of the linear combination of basis functions for each dimension of output vectors.
+Calculates the coefficients of the linear combination of polynomials used for approximation.
+This is done for each dimension of output data.
+
+!!! note
+
+If the matrix in the system of linear equations used to find the coefficients is singular, then zero coefficients are returned!
 """
 function calcMwlsCoefficients(obj::MwlsObject, inPt::Point, dist::Real = obj.EPS)
   m = size(obj.b, 1)
@@ -61,16 +60,18 @@ function calcMwlsCoefficients(obj::MwlsObject, inPt::Point, dist::Real = obj.EPS
   return result
 end
 
+# does the actual approximation
 """
-    `approximate(obj::MwlsObject, inPt::Point, dist::Real = obj.EPS)`
+    `approximate(obj::MwlsObject, pt::Point)`
+    `approximate(obj::MwlsObject, pt::Point; dist::Real = obj.EPS)`
 
-Approximates the `MwlsObject` at `inputPoint`.
-If for each sample input ``x_i``, ``\|\text{inPt} - x_i\|`` is greater than `dist`, then the result of the weight function is zero.
+This calculates the approximated value at `pt` for each dimension of output data.
+The actual value is returned.
 """
-function approximate(obj::MwlsObject, inPt::Point, dist::Real = obj.EPS)
-  cs = calcMwlsCoefficients(obj, inPt, dist)
+function approximate(obj::MwlsObject, pt::Point, dist::Real = obj.EPS)
+  cs = calcMwlsCoefficients(obj, pt, dist)
   poly = [polynomial(cs[:, i], obj.b) for i in 1:size(cs, 2)]
-  res = [p(obj.vars => inPt) for p in poly]
+  res = [p(obj.vars => pt) for p in poly]
   return length(res) == 1 ? res[1] : res
 end
 
@@ -94,12 +95,16 @@ function (obj::MwlsCllObject)(inPt::Point, dist::Real = obj.EPS)
   approximate(obj, inPt, dist)
 end
 
+# TODO: huh
 function (obj::MwlsCllObject)(inPt::Real, dist::Real = obj.EPS)
   return obj([inPt, 0], dist)
 end
 
 """
     `calcDiffMwlsPolys(obj::MwlsObject, inPt::Point, dirs::NTuple{N, Int64}; dist::Real = obj.EPS) where {N}`
+
+Polynomials created by [calcMwlsCoefficients](@ref) are differentiated according to dirs.
+For an example ``dirs = (1,2)`` means that the polynomials are differentiated as ``{\partial \over \partial x_1 \partial^2 x_2} P(x)``. 
 """
 function calcDiffMwlsPolys(obj::MwlsObject, inPt::Point, dirs::NTuple{N, Int64}; dist::Real = obj.EPS) where {N}
   cs = calcMwlsCoefficients(obj, inPt, dist)
@@ -139,7 +144,7 @@ function mwlsDiff(obj::MwlsObject, inPt::Point, dirs::Int; dist::Real = obj.EPS)
 end
 
 """
-    `mwlsDiff(obj::MwlsObject, inPt::Point, dirs::NTuple{N, Int64}; dist = obj.EPS)`
+    `mwlsDiff(obj::MwlsObject, inPt::Point, dirs::NTuple{N, Int64}; dist::Real = obj.EPS)`
 
 Calculates the approximated derivative at `inPt`, where `x[i]` is differentiated `dirs[i]` times.
 """

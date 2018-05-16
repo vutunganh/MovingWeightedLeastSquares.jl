@@ -14,10 +14,9 @@ include("wls-object.jl")
 include("wls-ops.jl")
 export CellLinkedList, cllAdd!, cllRemove!, cllModify!, cllIteratedCells, cllInrange
 include("cell-linked-list.jl")
-export MwlsObject,
-       mwlsNaive, mwlsKd, mwlsCll,
-       calcMwlsCoefficients, calcDiffMwlsPolys, mwlsDiff
+export MwlsObject, mwlsNaive, mwlsKd, mwlsCll
 include("mwls-object.jl")
+export calcMwlsCoefficients, approximate, calcDiffMwlsPolys, mwlsDiff
 include("mwls-ops.jl")
 
 end
