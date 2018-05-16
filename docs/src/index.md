@@ -5,10 +5,10 @@
 MovingWeightedLeastSquares.jl is a package that provides an implementation of the moving weighted least squares method.
 A (very) nice short description of this method by Andy Nealen can be found [here](http://nealen.de/projects/mls/asapmls.pdf).
 
-Let $\theta(d): \mathbb{R}^+ \rightarrow \mathbb{R}^+$ be a weighting function of the method.
-Very often the there will be an $\varepsilon \in \mathbb{R}$, such that $\forall \delta > \varepsilon: \theta(\delta) = 0$.
+Let ``\theta(d): \mathbb{R}^+ \rightarrow \mathbb{R}^+`` be a weighting function of the method.
+Very often the there will be an ``\varepsilon \in \mathbb{R}``, such that ``\forall \delta > \varepsilon: \theta(\delta) = 0``.
 Whenever we use $\varepsilon$ or `EPS` in this document, we mean the cutoff distance for the weighting function.
-An example of a good weighting function is $\theta(d) = \exp(d^2 / a^2)$, where $a$ is the average distance between sample input data.
+An example of a good weighting function is ``\theta(d) = \exp(d^2 / a^2)``, where ``a`` is the average distance between sample input data.
 
 `Point` data type is an alias to `Vector{T} where {T <: Real}`.
 
