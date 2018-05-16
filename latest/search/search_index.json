@@ -2,23 +2,23 @@
     "docs": [
         {
             "location": "/", 
-            "text": "Introduction\n\n\n\n\nOverview\n\n\nMovingWeightedLeastSquares.jl is a package that provides an implementation of the moving weighted least squares.\n\n\n\n\nConstructors", 
+            "text": "MovingWeightedLeastSquares.jl\n\n\n\n\nOverview\n\n\nMovingWeightedLeastSquares.jl is a package that provides an implementation of the moving weighted least squares method. A (very) nice short description of this method by Andy Nealen can be found \nhere\n.\n\n\nLet $\\theta(d): \\mathbb{R}^+ \\rightarrow \\mathbb{R}^+$ be a weighting function of the method. Very often the there will be an $\\varepsilon \\in \\mathbb{R}$, such that $\\forall \\delta \n \\varepsilon: \\theta(\\delta) = 0$. Whenever we use $\\varepsilon$ or \nEPS\n in this document, we mean the cutoff distance for the weighting function. An example of a good weighting function is $\\theta(d) = \\exp(d^2 / a^2)$, where $a$ is the average distance between sample input data.\n\n\nPoint\n data type is an alias to \nVector{T} where {T \n: Real}\n.\n\n\nInteraction with this package is done mostly via structure \nMwlsObject\n and its subclasses \nMwlsKdObject\n, \nMwlsCllObject\n and \nMwlsNaiveObject\n. This interface is similar to the interface of \"interpolations objects\" from \nInterpolations.jl\n.\n\n\nThe difference between the subclasses is the solution of the range search problem. \nMwlsKdObject\n solves the range search problem by using a k-d tree created by Kristoffer Carlsson, see \nNearestNeighbors.jl\n. \nMwlsCllObject\n solves the range search problem by using a cell linked list, which is implemented in this package. If the cell linked list is needed  \nMwlsNaiveObject\n solves the range search problem naively.   \nTL;DR\n: use anything but \nMwlsNaiveObject\n.\n\n\n\n\nInstallation\n\n\nAt the moment this package can be installed by manually cloning the package\n\n\nPkg.clone(\nhttps://github.com/vutunganh/MovingWeightedLeastSquares.jl\n)", 
             "title": "Home"
         }, 
         {
-            "location": "/#introduction", 
+            "location": "/#movingweightedleastsquaresjl", 
             "text": "", 
-            "title": "Introduction"
+            "title": "MovingWeightedLeastSquares.jl"
         }, 
         {
             "location": "/#overview", 
-            "text": "MovingWeightedLeastSquares.jl is a package that provides an implementation of the moving weighted least squares.", 
+            "text": "MovingWeightedLeastSquares.jl is a package that provides an implementation of the moving weighted least squares method. A (very) nice short description of this method by Andy Nealen can be found  here .  Let $\\theta(d): \\mathbb{R}^+ \\rightarrow \\mathbb{R}^+$ be a weighting function of the method. Very often the there will be an $\\varepsilon \\in \\mathbb{R}$, such that $\\forall \\delta   \\varepsilon: \\theta(\\delta) = 0$. Whenever we use $\\varepsilon$ or  EPS  in this document, we mean the cutoff distance for the weighting function. An example of a good weighting function is $\\theta(d) = \\exp(d^2 / a^2)$, where $a$ is the average distance between sample input data.  Point  data type is an alias to  Vector{T} where {T  : Real} .  Interaction with this package is done mostly via structure  MwlsObject  and its subclasses  MwlsKdObject ,  MwlsCllObject  and  MwlsNaiveObject . This interface is similar to the interface of \"interpolations objects\" from  Interpolations.jl .  The difference between the subclasses is the solution of the range search problem.  MwlsKdObject  solves the range search problem by using a k-d tree created by Kristoffer Carlsson, see  NearestNeighbors.jl .  MwlsCllObject  solves the range search problem by using a cell linked list, which is implemented in this package. If the cell linked list is needed   MwlsNaiveObject  solves the range search problem naively.    TL;DR : use anything but  MwlsNaiveObject .", 
             "title": "Overview"
         }, 
         {
-            "location": "/#constructors", 
-            "text": "", 
-            "title": "Constructors"
+            "location": "/#installation", 
+            "text": "At the moment this package can be installed by manually cloning the package  Pkg.clone( https://github.com/vutunganh/MovingWeightedLeastSquares.jl )", 
+            "title": "Installation"
         }
     ]
 }
