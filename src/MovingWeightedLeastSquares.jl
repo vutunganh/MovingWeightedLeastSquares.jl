@@ -12,7 +12,7 @@ include("polynomial-generator.jl")
 export WlsObject, wls, calcWlsCoefficients, plotWls
 include("wls-object.jl")
 include("wls-ops.jl")
-export CellLinkedList, cllAdd!, cllRemove!, cllModify!, cllIteratedCells, cllInrange
+export CellLinkedList, cllAdd!, cllRemove!, cllModify!, cllInrange
 include("cell-linked-list.jl")
 export MwlsObject, mwlsNaive, mwlsKd, mwlsCll
 include("mwls-object.jl")
