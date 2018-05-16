@@ -100,10 +100,10 @@ function (obj::MwlsCllObject)(inPt::Real, dist::Real = obj.EPS)
 end
 
 """
-    `calcDiffMwlsPolys(obj::MwlsObject, inPt::Point, dirs::NTuple{N, Int64}; dist::Real = obj.EPS) where {N}`
+    calcDiffMwlsPolys(obj::MwlsObject, inPt::Point, dirs::NTuple{N, Int64}; dist::Real = obj.EPS) where {N}
 
 Polynomials created by [calcMwlsCoefficients](@ref) are differentiated according to dirs.
-For an example ``dirs = (1,2)`` means that the polynomials are differentiated as ``{\partial \over \partial x_1 \partial^2 x_2} P(x)``. 
+For an example if ``f`` is the polynomial used for approximation, then ``dirs = (1,2)`` returns ``\\frac{\\partial^3}{\\partial x_1 \\partial x_2^2}f``.
 """
 function calcDiffMwlsPolys(obj::MwlsObject, inPt::Point, dirs::NTuple{N, Int64}; dist::Real = obj.EPS) where {N}
   cs = calcMwlsCoefficients(obj, inPt, dist)
