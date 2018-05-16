@@ -29,19 +29,34 @@ obj(1)
 
 If a different range of neighbor data is needed, then use
 
-```@example
-obj(1; dist = 1)
+```@example approx
+obj(1, 1)
 ```
 
 ## Relevant documentation
 
 ```@docs
-calcMwlsCoefficients
 approximate
+calcMwlsCoefficients
 ```
 
 # Approximation of derivative
 
-Let `obj` be a subclass of `MwlsObject`.
-To calculate an approximation at `pt` `obj(pt::Point)` should be used.
+## Example
+
+Approximation of first derivative on the dataset from the previous example can be done by using
+
+```@example approx
+mwlsDiff(obj, 1, 1)
+```
+
+Formally a tuple is required for specifying the orders of derivates for each variable.
+Let ``$f$`` be the approximated function. For an example a tuple `(1, 2)` calculates ``$\frac{\partial}{\partial x_1 \partial x_2}f$``.
+
+## Relevant documentation
+
+```@docs
+mwlsDiff
+calcDiffMwlsPolys
+```
 
