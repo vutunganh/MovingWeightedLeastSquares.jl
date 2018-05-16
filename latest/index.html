@@ -110,7 +110,8 @@
 <p>Let $\theta(d): \mathbb{R}^+ \rightarrow \mathbb{R}^+$ be a weighting function of the method. Very often the there will be an $\varepsilon \in \mathbb{R}$, such that $\forall \delta &gt; \varepsilon: \theta(\delta) = 0$. Whenever we use $\varepsilon$ or <code>EPS</code> in this document, we mean the cutoff distance for the weighting function. An example of a good weighting function is $\theta(d) = \exp(d^2 / a^2)$, where $a$ is the average distance between sample input data.</p>
 <p><code>Point</code> data type is an alias to <code>Vector{T} where {T &lt;: Real}</code>.</p>
 <p>Interaction with this package is done mostly via structure <code>MwlsObject</code> and its subclasses <code>MwlsKdObject</code>, <code>MwlsCllObject</code> and <code>MwlsNaiveObject</code>. This interface is similar to the interface of "interpolations objects" from <a href="https://github.com/JuliaMath/Interpolations.jl">Interpolations.jl</a>.</p>
-<p>The difference between the subclasses is the solution of the range search problem. <code>MwlsKdObject</code> solves the range search problem by using a k-d tree created by Kristoffer Carlsson, see <a href="https://github.com/KristofferC/NearestNeighbors.jl">NearestNeighbors.jl</a>. <code>MwlsCllObject</code> solves the range search problem by using a cell linked list, which is implemented in this package. If the cell linked list is needed  <code>MwlsNaiveObject</code> solves the range search problem naively.   <strong>TL;DR</strong>: use anything but <code>MwlsNaiveObject</code>.</p>
+<p>The difference between the subclasses is the solution of the range search problem. <code>MwlsKdObject</code> solves the range search problem by using a k-d tree created by Kristoffer Carlsson, see <a href="https://github.com/KristofferC/NearestNeighbors.jl">NearestNeighbors.jl</a>. <code>MwlsCllObject</code> solves the range search problem by using a cell linked list, which is implemented in this package. If the cell linked list is needed  <code>MwlsNaiveObject</code> solves the range search problem naively.</p>
+<p><strong>TL;DR</strong>: use anything but <code>MwlsNaiveObject</code>.</p>
 <p><a id='Installation-1'></a></p>
 <h2 id="installation">Installation</h2>
 <p>At the moment this package can be installed by manually cloning the package</p>
@@ -160,5 +161,5 @@
 
 <!--
 MkDocs version : 0.17.3
-Build Date UTC : 2018-05-16 13:24:19
+Build Date UTC : 2018-05-16 19:08:45
 -->
