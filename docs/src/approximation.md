@@ -51,7 +51,10 @@ mwlsDiff(obj, 1, 1)
 ```
 
 Formally a tuple is required for specifying the orders of derivates for each variable.
-Let ``$f$`` be the approximated function. For an example a tuple `(1, 2)` calculates ``$\frac{\partial}{\partial x_1 \partial x_2}f$``.
+Let ``f`` be the approximated function. For an example a tuple `(1, 2)` calculates
+```math
+\frac{\partial^3}{\partial x_1 \partial x_2^2}f.
+```
 
 ## Relevant documentation
 
