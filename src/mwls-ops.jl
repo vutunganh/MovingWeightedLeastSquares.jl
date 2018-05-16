@@ -61,10 +61,17 @@ function calcMwlsCoefficients(obj::MwlsObject, inPt::Point, dist::Real = obj.EPS
 end
 
 # does the actual approximation
-function approximate(obj::MwlsObject, inPt::Point, dist::Real = obj.EPS)
-  cs = calcMwlsCoefficients(obj, inPt, dist)
+"""
+    `approximate(obj::MwlsObject, pt::Point)`
+    `approximate(obj::MwlsObject, pt::Point; dist::Real = obj.EPS)`
+
+This calculates the approximated value at `pt` for each dimension of output data.
+The actual value is returned.
+"""
+function approximate(obj::MwlsObject, pt::Point, dist::Real = obj.EPS)
+  cs = calcMwlsCoefficients(obj, pt, dist)
   poly = [polynomial(cs[:, i], obj.b) for i in 1:size(cs, 2)]
-  res = [p(obj.vars => inPt) for p in poly]
+  res = [p(obj.vars => pt) for p in poly]
   return length(res) == 1 ? res[1] : res
 end
 
