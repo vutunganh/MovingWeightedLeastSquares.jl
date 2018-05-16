@@ -37,7 +37,7 @@ K-d trees are always faster and cell linked lists are faster on datasets larger 
 """
 function mwlsNaive(inputs::Array{T, N}, outputs::Array{U, M},
                    EPS::Real, weightFunc::Function;
-                   maxDegree::Int = 2) where {T <: Real, U <: Real, N, M}
+                   maxDegree::Integer = 2) where {T <: Real, U <: Real, N, M}
   size(outputs, 1) != size(inputs, 1) &&
     error("The amount of inputs and outputs differs")
 
@@ -53,7 +53,7 @@ K-d trees are always faster and cell linked lists are faster on datasets larger 
 `mwlsNaive` has the same signature as `mwlsCll`.
 """
 function mwlsNaive(input::Array{T, 2}, EPS::Real, weightFunc::Function;
-                   outputDim::Int = 1, maxDegree::Int = 2) where {T <: Real}
+                   outputDim::Integer = 1, maxDegree::Integer = 2) where {T <: Real}
   width = size(input, 2)
   inputEnd = width - outputDim
   outputStart = inputEnd + 1
@@ -90,7 +90,7 @@ struct MwlsKdObject <: MwlsObject
 end
 
 function MwlsKdObject(inputs, outputs, EPS, weightFunc, vars, b;
-                      leafSize::Int = 10)
+                      leafSize::Integer = 10)
   t = transpose(inputs)
   o = transpose(outputs)
   return MwlsKdObject(t, o, EPS, weightFunc,
@@ -116,7 +116,7 @@ Creates `MwlsKdObject` from sample input and sample output data, the cutoff dist
 """
 function mwlsKd(inputs::Array{T, N}, outputs::Array{U},
                 EPS::Real, weightFunc::Function;
-                leafSize::Int = 10, maxDegree::Int = 2) where {T <: Real, U <: Real, N}
+                leafSize::Integer = 10, maxDegree::Integer = 2) where {T <: Real, U <: Real, N}
   size(outputs, 1) != size(inputs, 1) &&
     error("The amount of inputs and outputs differs.")
 
@@ -136,7 +136,7 @@ It is assumed that each pair of input and output is on a single row.
 Dimension of the output is specified with kwarg `outputDim`.
 """
 function mwlsKd(input::Array{T, 2}, EPS::Real, weightFunc::Function;
-                outputDim::Int = 1, leafSize::Int = 10, maxDegree::Int = 2) where {T <: Real}
+                outputDim::Integer = 1, leafSize::Integer = 10, maxDegree::Int = 2) where {T <: Real}
   width = size(input, 2)
   inputEnd = width - outputDim
   outputStart = inputEnd + 1
@@ -197,7 +197,7 @@ Creates `MwlsCllObject` from sample input and sample output data, the cutoff dis
 """
 function mwlsCll(inputs::Array{T, N}, outputs::Array{U},
                  EPS::Real, weightFunc::Function;
-                 maxDegree::Int = 2) where {T <: Real, U <: Real, N}
+                 maxDegree::Integer = 2) where {T <: Real, U <: Real, N}
   size(outputs, 1) != size(inputs, 1) &&
     error("The amount of inputs and outputs differs.")
 
@@ -217,7 +217,7 @@ It is assumed that each pair of input and output is on a single row.
 Dimension of the output is specified with kwarg `outputDim`.
 """
 function mwlsCll(input::Array{T, 2}, EPS::Real, weightFunc::Function;
-                 outputDim::Int = 1, maxDegree::Int = 2) where {T <: Real}
+                 outputDim::Integer = 1, maxDegree::Integer = 2) where {T <: Real}
   width = size(input, 2)
   inputEnd = width - outputDim
   outputStart = inputEnd + 1
