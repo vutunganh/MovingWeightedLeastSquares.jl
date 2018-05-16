@@ -19,7 +19,8 @@ The difference between the subclasses is the solution of the range search proble
 `MwlsKdObject` solves the range search problem by using a k-d tree created by Kristoffer Carlsson, see [NearestNeighbors.jl](https://github.com/KristofferC/NearestNeighbors.jl).
 `MwlsCllObject` solves the range search problem by using a cell linked list, which is implemented in this package.
 If the cell linked list is needed 
-`MwlsNaiveObject` solves the range search problem naively.  
+`MwlsNaiveObject` solves the range search problem naively.
+
 **TL;DR**: use anything but `MwlsNaiveObject`.
 
 ## Installation
