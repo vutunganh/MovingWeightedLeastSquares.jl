@@ -22,7 +22,7 @@ function getInrangeData(obj::MwlsCllObject, inPt::Point, dist::Real = obj.EPS)
 end
 
 """
-    `calcMwlsCoefficients(obj::MwlsObject, inPt::Point, dist::Real)`
+    calcMwlsCoefficients(obj::MwlsObject, inPt::Point, dist::Real)
 
 Calculates the coefficients of the linear combination of polynomials used for approximation.
 This is done for each dimension of output data.
@@ -62,8 +62,8 @@ end
 
 # does the actual approximation
 """
-    `approximate(obj::MwlsObject, pt::Point)`
-    `approximate(obj::MwlsObject, pt::Point; dist::Real = obj.EPS)`
+    approximate(obj::MwlsObject, pt::Point)
+    approximate(obj::MwlsObject, pt::Point; dist::Real = obj.EPS)
 
 This calculates the approximated value at `pt` for each dimension of output data.
 The actual value is returned.
@@ -117,34 +117,50 @@ function calcDiffMwlsPolys(obj::MwlsObject, inPt::Point, dirs::NTuple{N, Int64};
   return poly
 end
 
+"""
+    mwlsDiff(obj::MwlsNaiveObject, inPt::Real, dirs::Int; dist::Real = obj.EPS)
+"""
 function mwlsDiff(obj::MwlsNaiveObject, inPt::Real, dirs::Int; dist::Real = obj.EPS)
   mwlsDiff(obj, [inPt], ntuple(x -> dirs, 1); dist = dist)
 end
 
+"""
+    mwlsDiff(obj::MwlsNaiveObject, inPt::Point, dirs::Int; dist::Real = obj.EPS)
+"""
 function mwlsDiff(obj::MwlsNaiveObject, inPt::Point, dirs::Int; dist::Real = obj.EPS)
   mwlsDiff(obj, inPt, ntuple(x -> dirs, 1); dist = dist)
 end
 
+"""
+    mwlsDiff(obj::MwlsNaiveObject, inPt::Real, dirs::NTuple{N, Int}; dist::Real = obj.EPS) where {N}
+"""
 function mwlsDiff(obj::MwlsNaiveObject, inPt::Real, dirs::NTuple{N, Int}; dist::Real = obj.EPS) where {N}
   mwlsDiff(obj, [inPt], dirs, dist)
 end
 
+"""
+    mwlsDiff(obj::MwlsObject, inPt::Real, dirs::Int; dist::Real = obj.EPS)
+"""
 function mwlsDiff(obj::MwlsObject, inPt::Real, dirs::Int; dist::Real = obj.EPS)
   mwlsDiff(obj, [inPt, 0], ntuple(x -> dirs, 1); dist = dist)
 end
 
-"this function exists, because writing a 1d point is cumbersome"
+"""
+    mwlsDiff(obj::MwlsObject, inPt::Real, dirs::NTuple{N, Int}; dist::Real = obj.EPS) where {N}
+"""
 function mwlsDiff(obj::MwlsObject, inPt::Real, dirs::NTuple{N, Int}; dist::Real = obj.EPS) where {N}
   mwlsDiff(obj, [inPt, 0], ntuple(x -> dirs, 1); dist = dist)
 end
 
-"this function exists, because writing a tuple literal with a single element is difficult"
+"""
+    mwlsDiff(obj::MwlsObject, inPt::Point, dirs::Int; dist::Real = obj.EPS)
+"""
 function mwlsDiff(obj::MwlsObject, inPt::Point, dirs::Int; dist::Real = obj.EPS)
   mwlsDiff(obj, inPt, ntuple(x -> dirs, 1); dist = dist)
 end
 
 """
-    `mwlsDiff(obj::MwlsObject, inPt::Point, dirs::NTuple{N, Int64}; dist::Real = obj.EPS)`
+    mwlsDiff(obj::MwlsObject, inPt::Point, dirs::NTuple{N, Int64}; dist::Real = obj.EPS)
 
 Calculates the approximated derivative at `inPt`, where `x[i]` is differentiated `dirs[i]` times.
 """
