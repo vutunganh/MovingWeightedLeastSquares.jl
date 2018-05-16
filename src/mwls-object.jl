@@ -99,13 +99,13 @@ function MwlsKdObject(inputs, outputs, EPS, weightFunc, vars, b;
 end
 
 """
-`mwlsKd(inputs::Array{T, N}, outputs::Array{U}, EPS::Real, weightFunc::Function) where {T <: Real, U <: Real, N}`
-`mwlsKd(inputs::Array{T, N}, outputs::Array{U}, EPS::Real, weightFunc::Function; leafsize::Int = 10, maxDegree::Int = 2) where {T <: Real, U <: Real, N}`
+    mwlsKd(inputs::Array{T, N}, outputs::Array{U}, EPS::Real, weightFunc::Function) where {T <: Real, U <: Real, N}
+    mwlsKd(inputs::Array{T, N}, outputs::Array{U}, EPS::Real, weightFunc::Function; leafsize::Int = 10, maxDegree::Int = 2) where {T <: Real, U <: Real, N}
 
 Creates `MwlsKdObject` from sample input and sample output data, the cutoff distance ε and a weighting function θ.
 
 # Arguments
-- `inputs`: a 2d array of input points where each point is on a single row,
+- `inputs`: a 2d array or a vector of input points where each point is on a single row,
 - `outputs`: a 2d array or a vector of output scalars where each output is on a single row,
 - `EPS::Real`: ε of the method (default distance threshold for neighbor search),
 - `weightFunc::Function`: weighting function of the method. It should be in form `(distance, EPS) -> Float64`.
@@ -128,8 +128,8 @@ function mwlsKd(inputs::Array{T, N}, outputs::Array{U},
 end
 
 """
-  `mwlsKd(input::Array{T, 2}, EPS::Real, weightFunc::Function) where {T <: Real}`
-  `mwlsKd(input::Array{T, 2}, EPS::Real, weightFunc::Function; outputDim::Int = 1, leafSize::Int = 10, maxDegree::Int = 2) where {T <: Real}`
+    mwlsKd(input::Array{T, 2}, EPS::Real, weightFunc::Function) where {T <: Real}
+    mwlsKd(input::Array{T, 2}, EPS::Real, weightFunc::Function; outputDim::Int = 1, leafSize::Int = 10, maxDegree::Int = 2) where {T <: Real}
 
 In this `mwlsKd` function, the sample input and sample output data are passed in a single array.
 It is assumed that each pair of input and output is on a single row.
@@ -181,8 +181,8 @@ function MwlsCllObject(inputs, outputs, EPS, weightFunc, vars, b)
 end
 
 """
-    `mwlsCll(inputs::Array{T, N}, outputs::Array{U}, EPS::Real, weightFunc::Function) where {T <: Real, U <: Real, N}`
-    `mwlsCll(inputs::Array{T, N}, outputs::Array{U}, EPS::Real, weightFunc::Function; maxDegree::Int = 2) where {T <: Real, U <: Real, N}`
+    mwlsCll(inputs::Array{T, N}, outputs::Array{U}, EPS::Real, weightFunc::Function) where {T <: Real, U <: Real, N}
+    mwlsCll(inputs::Array{T, N}, outputs::Array{U}, EPS::Real, weightFunc::Function; maxDegree::Int = 2) where {T <: Real, U <: Real, N}
 
 Creates `MwlsCllObject` from sample input and sample output data, the cutoff distance ε and a weighting function θ.
 
@@ -209,8 +209,8 @@ function mwlsCll(inputs::Array{T, N}, outputs::Array{U},
 end
 
 """
-    `mwlsCll(input::Array{T, 2}, EPS::Real, weightFunc::Function) where {T <: Real}`
-    `mwlsCll(input::Array{T, 2}, EPS::Real, weightFunc::Function; outputDim::Int = 1, maxDegree::Int = 2) where {T <: Real}`
+    mwlsCll(input::Array{T, 2}, EPS::Real, weightFunc::Function) where {T <: Real}
+    mwlsCll(input::Array{T, 2}, EPS::Real, weightFunc::Function; outputDim::Int = 1, maxDegree::Int = 2) where {T <: Real}
 
 In this `mwlsCll` function, the sample input and sample output data are passed in a single array.
 It is assumed that each pair of input and output is on a single row.
