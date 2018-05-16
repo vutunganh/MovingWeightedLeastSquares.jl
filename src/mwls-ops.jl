@@ -100,12 +100,12 @@ function (obj::MwlsCllObject)(inPt::Real, dist::Real = obj.EPS)
 end
 
 """
-    calcDiffMwlsPolys(obj::MwlsObject, inPt::Point, dirs::NTuple{N, Int64}; dist::Real = obj.EPS) where {N}
+    calcDiffMwlsPolys(obj::MwlsObject, inPt::Point, dirs::NTuple{N, Integer}; dist::Real = obj.EPS) where {N}
 
 Polynomials created by [calcMwlsCoefficients](@ref) are differentiated according to dirs.
 For an example if ``f`` is the polynomial used for approximation, then ``dirs = (1,2)`` returns ``\\frac{\\partial^3}{\\partial x_1 \\partial x_2^2}f``.
 """
-function calcDiffMwlsPolys(obj::MwlsObject, inPt::Point, dirs::NTuple{N, Int64}; dist::Real = obj.EPS) where {N}
+function calcDiffMwlsPolys(obj::MwlsObject, inPt::Point, dirs::NTuple{N, Integer}; dist::Real = obj.EPS) where {N}
   cs = calcMwlsCoefficients(obj, inPt, dist)
   poly = [polynomial(cs[:, i], obj.b) for i in 1:size(cs, 2)]
   @inbounds for j in 1:length(poly)
@@ -117,53 +117,53 @@ function calcDiffMwlsPolys(obj::MwlsObject, inPt::Point, dirs::NTuple{N, Int64};
 end
 
 """
-    mwlsDiff(obj::MwlsNaiveObject, inPt::Real, dirs::Int; dist::Real = obj.EPS)
+    mwlsDiff(obj::MwlsNaiveObject, inPt::Real, dirs::Integer; dist::Real = obj.EPS)
 """
-function mwlsDiff(obj::MwlsNaiveObject, inPt::Real, dirs::Int; dist::Real = obj.EPS)
+function mwlsDiff(obj::MwlsNaiveObject, inPt::Real, dirs::Integer; dist::Real = obj.EPS)
   mwlsDiff(obj, [inPt], ntuple(x -> dirs, 1); dist = dist)
 end
 
 """
-    mwlsDiff(obj::MwlsNaiveObject, inPt::Point, dirs::Int; dist::Real = obj.EPS)
+    mwlsDiff(obj::MwlsNaiveObject, inPt::Point, dirs::Integer; dist::Real = obj.EPS)
 """
-function mwlsDiff(obj::MwlsNaiveObject, inPt::Point, dirs::Int; dist::Real = obj.EPS)
+function mwlsDiff(obj::MwlsNaiveObject, inPt::Point, dirs::Integer; dist::Real = obj.EPS)
   mwlsDiff(obj, inPt, ntuple(x -> dirs, 1); dist = dist)
 end
 
 """
-    mwlsDiff(obj::MwlsNaiveObject, inPt::Real, dirs::NTuple{N, Int}; dist::Real = obj.EPS) where {N}
+    mwlsDiff(obj::MwlsNaiveObject, inPt::Real, dirs::NTuple{N, Integer}; dist::Real = obj.EPS) where {N}
 """
-function mwlsDiff(obj::MwlsNaiveObject, inPt::Real, dirs::NTuple{N, Int}; dist::Real = obj.EPS) where {N}
+function mwlsDiff(obj::MwlsNaiveObject, inPt::Real, dirs::NTuple{N, Integer}; dist::Real = obj.EPS) where {N}
   mwlsDiff(obj, [inPt], dirs, dist)
 end
 
 """
-    mwlsDiff(obj::MwlsObject, inPt::Real, dirs::Int; dist::Real = obj.EPS)
+    mwlsDiff(obj::MwlsObject, inPt::Real, dirs::Integer; dist::Real = obj.EPS)
 """
-function mwlsDiff(obj::MwlsObject, inPt::Real, dirs::Int; dist::Real = obj.EPS)
+function mwlsDiff(obj::MwlsObject, inPt::Real, dirs::Integer; dist::Real = obj.EPS)
   mwlsDiff(obj, [inPt, 0], ntuple(x -> dirs, 1); dist = dist)
 end
 
 """
-    mwlsDiff(obj::MwlsObject, inPt::Real, dirs::NTuple{N, Int}; dist::Real = obj.EPS) where {N}
+    mwlsDiff(obj::MwlsObject, inPt::Real, dirs::NTuple{N, Integer}; dist::Real = obj.EPS) where {N}
 """
-function mwlsDiff(obj::MwlsObject, inPt::Real, dirs::NTuple{N, Int}; dist::Real = obj.EPS) where {N}
+function mwlsDiff(obj::MwlsObject, inPt::Real, dirs::NTuple{N, Integer}; dist::Real = obj.EPS) where {N}
   mwlsDiff(obj, [inPt, 0], ntuple(x -> dirs, 1); dist = dist)
 end
 
 """
-    mwlsDiff(obj::MwlsObject, inPt::Point, dirs::Int; dist::Real = obj.EPS)
+    mwlsDiff(obj::MwlsObject, inPt::Point, dirs::Integer; dist::Real = obj.EPS)
 """
-function mwlsDiff(obj::MwlsObject, inPt::Point, dirs::Int; dist::Real = obj.EPS)
+function mwlsDiff(obj::MwlsObject, inPt::Point, dirs::Integer; dist::Real = obj.EPS)
   mwlsDiff(obj, inPt, ntuple(x -> dirs, 1); dist = dist)
 end
 
 """
-    mwlsDiff(obj::MwlsObject, inPt::Point, dirs::NTuple{N, Int64}; dist::Real = obj.EPS)
+    mwlsDiff(obj::MwlsObject, inPt::Point, dirs::NTuple{N, Integer}; dist::Real = obj.EPS)
 
 Calculates the approximated derivative at `inPt`, where `x[i]` is differentiated `dirs[i]` times.
 """
-function mwlsDiff(obj::MwlsObject, inPt::Point, dirs::NTuple{N, Int}; dist::Real = obj.EPS) where {N}
+function mwlsDiff(obj::MwlsObject, inPt::Point, dirs::NTuple{N, Integer}; dist::Real = obj.EPS) where {N}
   N != length(obj.vars) && error("Mismatch between tuple size and amount of variables")
   pl = calcDiffMwlsPolys(obj, inPt, dirs; dist = dist)
   res = [p(obj.vars => inPt) for p in pl]

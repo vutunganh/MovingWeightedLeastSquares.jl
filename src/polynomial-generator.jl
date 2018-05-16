@@ -1,19 +1,17 @@
 """
-    generate(variableCount::Int, maxDegree:Int)
+    generate(dim::Integer, maxdegree:Integer)
 
 Generates an array of monomials.
 
 # Arguments
-- `variableCount::Int`: the amount of variables, aka dimension of variable,
-- `maxDegree::Int`: maximal degree of each term in the polynomial, aka spatial dimension.
+- `dim::Int`: the amount of variables, aka dimension of the input data,
+- `maxdegree::Int`: maximal degree of each term in the polynomial.
 
 Returns the monomial variables and the monomials themselves.
-
-In general, the amount of terms is given by `{variableCount + maxDegree \choose variableCount}`.
 """
-function generateMonomials(variableCount::Int, maxDegree::Int)
-  vars = @polyvar x[1:variableCount]
-  if variableCount < 0 || maxDegree < 0
+function generateMonomials(dim::Integer, maxdegree::Integer)
+  vars = @polyvar x[1:dim]
+  if dim < 0 || maxdegree < 0
     error("Cannot generate a polynomial with negative dimensions")
   end
   monomials::Vector{Monomial{true}} = [constantterm(1, sum(vars))]
@@ -21,9 +19,9 @@ function generateMonomials(variableCount::Int, maxDegree::Int)
   for v in vars
     tmpMonomials::Vector{Monomial{true}} = []
     for done in monomials
-      @inbounds for d in 1:maxDegree
+      @inbounds for d in 1:maxdegree
         tmp::Monomial{true} = done * v^d
-        if degree(tmp) > maxDegree
+        if degree(tmp) > maxdegree
           break
         else
           push!(tmpMonomials, tmp)

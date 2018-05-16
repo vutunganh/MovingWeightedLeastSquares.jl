@@ -33,8 +33,8 @@ end
 """
 Creates a grid of empty linked lists.
 """
-function cllCreateEmptyGrid(cubes::Vector{Int})
-  return fill(nil(Int), Tuple(cubes))
+function cllCreateEmptyGrid(cubes::Vector{T}) where {T <: Integer}
+  return fill(nil(T), Tuple(cubes))
 end
 
 """
@@ -56,7 +56,7 @@ Some operations on the CLL might increase the size of the gridded space.
 Instead of recreating a new CLL, we reuse the already created lists assuming that `EPS` hasn't changed.
 """
 function cllRecreateGrid!(cll::CellLinkedList,
-                          newGrid::Array{LinkedList{T}}) where {T <: Int}
+                          newGrid::Array{LinkedList{T}}) where {T <: Integer}
   for l in cll.grid
     l == nil() && continue
 
@@ -112,7 +112,7 @@ end
 """
 Removes a point from the its cell.  It remains in `data`.
 """
-function cllRemoveIdx(cll::CellLinkedList, idx::Int, pos)
+function cllRemoveIdx(cll::CellLinkedList, idx::Integer, pos)
   h = cll.grid[pos...]
   toDel = tail(h)
   if head(h) == idx
@@ -135,7 +135,7 @@ end
 Only removes it from the linked list, because array deletions are expensive.
 Maybe add a deletion counter and perform a deletion when `counter > sqrt(length(data))`
 """
-function cllRemove!(cll::CellLinkedList, idx::Int)
+function cllRemove!(cll::CellLinkedList, idx::Integer)
   if idx < 1 || idx > size(data, 2)
     throw(BoundsError(cll.data, idx))
   end
@@ -148,7 +148,7 @@ end
 """
 Changes `idx`th data to new coordinates.
 """
-function cllModify!(cll::CellLinkedList, idx::Int, newPt::Point)
+function cllModify!(cll::CellLinkedList, idx::Integer, newPt::Point)
   oldPos = cllIndex(cll, cll.data[:, idx])
   newPos = cllIndex(cll, newPt)
   if oldPos == newPos
