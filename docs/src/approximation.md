@@ -15,7 +15,7 @@ fs = [sin(x) for x in xs];
 ```
 
 Now let's construct an approximation object `obj`.
-Let's choose a weighting function ``$\theta(d) = \exp(d^2)$``.
+Let's choose a weighting function ``\theta(d) = \exp(d^2)``.
 
 ```@example approx
 obj = mwlsKd(xs, fs, 0.5, (d, e) -> (exp(-d^2)));
