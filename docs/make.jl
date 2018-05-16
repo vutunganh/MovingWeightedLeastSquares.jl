@@ -1,10 +1,11 @@
 using Documenter, MovingWeightedLeastSquares
 
 makedocs(modules = [MovingWeightedLeastSquares],
+         clean = false,
          format = :html,
          sitename ="MovingWeightedLeastSquares.jl",
          authors = "Tung Anh Vu",
-         pages = [
+         pages = Any[
            "Home" => "index.md",
            "Constructors" => "constructors.md",
            "Approximation" => "approximation.md"
