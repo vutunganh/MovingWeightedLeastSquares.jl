@@ -1,5 +1,5 @@
 """
-    `generate(variableCount::Int, maxDegree:Int)`
+    generate(variableCount::Int, maxDegree:Int)
 
 Generates an array of monomials.
 
