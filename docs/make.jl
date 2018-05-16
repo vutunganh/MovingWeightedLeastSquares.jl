@@ -1,11 +1,14 @@
 using Documenter, MovingWeightedLeastSquares
 
-makedocs()
-#= makedocs(format = :html, =#
-#=          sitename ="MovingWeightedLeastSquares.jl", =#
-#=          pages = [ =#
-#=                   "Introduction" => "index.md"] =#
-#=         ) =#
+makedocs(format = :html,
+         sitename ="MovingWeightedLeastSquares.jl",
+         authors = "Tung Anh Vu",
+         pages = [
+           "Home" => "index.md",
+           "Constructors" => "constructors.md",
+           "Approximation" => "approximation.md"
+         ]
+        )
 
 deploydocs(deps = Deps.pip("mkdocs", "python-markdown-math"),
            repo = "github.com/vutunganh/MovingWeightedLeastSquares.jl",
