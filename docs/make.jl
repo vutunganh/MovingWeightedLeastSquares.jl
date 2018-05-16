@@ -1,6 +1,7 @@
 using Documenter, MovingWeightedLeastSquares
 
-makedocs(format = :html,
+makedocs(modules = [MovingWeightedLeastSquares],
+         format = :html,
          sitename ="MovingWeightedLeastSquares.jl",
          authors = "Tung Anh Vu",
          pages = [
