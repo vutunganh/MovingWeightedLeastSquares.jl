@@ -8,7 +8,7 @@ Cell linked list splits the vector space a regular grid with edge length `EPS`.
 - `EPS::Real`: the edge length of each grid cube
 - `maxs::Vector{T} where {T <: Real}`: stores the maximal coordinate over all data
 - `mins::Vector{T} where {T <: Real}`: stores the minimal coordinate over all data
-- `prevQuery::Real`: skip `cllNeighborCells` in `cllInrange` if `Int(ceil(dist / edge)) == Int(ceil(prevQuery / edge))`
+- `prevQuery::Real`: skip `cllNeighborCells` in `cll_inrange` if `Int(ceil(dist / edge)) == Int(ceil(prevQuery / edge))`
 - `dirs::Vector{T}`: cached vector of neighbor cells
 """
 struct CellLinkedList
@@ -25,29 +25,40 @@ end
 Calculates the amount of cubes in the grid.
 A cell linked list with the resulting amount of cubes will be able to hold any vector `v` where `v .<= maxs` and `v .>= mins`.
 """
-function cllCubeCount(maxs::Vector{T}, mins::Vector{T}, EPS::Real) where {T <: Real}
+function cll_cubecount(maxs::Vector{T}, mins::Vector{T}, EPS::Real) where {T <: Real}
   size(maxs, 1) != size(mins, 1) && throw(DimensionMismatch())
   return [Int(floor(maxs[i] / EPS) - floor(mins[i] / EPS)) for i in 1:size(maxs, 1)] + 1
 end
 
+function cllCubeCount(a...)
+  warn("This function is deprecated, use `cll_cubecount` instead.")
+end
 """
 Creates a grid of empty linked lists.
 """
-function cllCreateEmptyGrid(cubes::Vector{T}) where {T <: Integer}
+function cll_initgrid(cubes::Vector{T}) where {T <: Integer}
   return fill(nil(T), Tuple(cubes))
+end
+
+function cllCreateEmptyGrid(a...)
+  warn("This function is deprecated, use `cll_initgrid` instead.")
 end
 
 """
 Finds point's index in the grid of `cll`.
 """
-function cllIndex(cll::CellLinkedList, pt::Point)
-  return cllIndex(cll.mins, cll.EPS, pt)
+function cll_index(cll::CellLinkedList, pt::Point)
+  return cll_index(cll.mins, cll.EPS, pt)
+end
+
+function cllIndex(a...)
+  warn("This function is deprecated, use `cll_index` instead.")
 end
 
 """
 Finds point's index in the grid given by `mins` and `EPS`.
 """
-function cllIndex(mins::Vector{T}, EPS::Real, pt::Point) where {T <: Real}
+function cll_index(mins::Vector{T}, EPS::Real, pt::Point) where {T <: Real}
   return Int.(floor.((pt - mins) / EPS)) + 1
 end
 
@@ -55,15 +66,19 @@ end
 Some operations on the CLL might increase the size of the gridded space.
 Instead of recreating a new CLL, we reuse the already created lists assuming that `EPS` hasn't changed.
 """
-function cllRecreateGrid!(cll::CellLinkedList,
+function cll_initgrid!(cll::CellLinkedList,
                           newGrid::Array{LinkedList{T}}) where {T <: Integer}
   for l in cll.grid
     l == nil() && continue
 
-    pos = cllIndex(cll.mins, cll.EPS, cll.data[:, head(l)])
+    pos = cll_index(cll.mins, cll.EPS, cll.data[:, head(l)])
     newGrid[pos...] = l
   end
   return nothing
+end
+
+function cllCreateEmptyGrid!(a...)
+  warn("This function is deprecated, use `cll_initgrid` instead.")
 end
 
 """
@@ -78,11 +93,11 @@ function CellLinkedList(data::Array{T, 2}, EPS::Real) where {T <: Real}
   cnt = size(data, 2)
   maxs = [maximum(data[i, :]) for i in 1:dim]
   mins = [minimum(data[i, :]) for i in 1:dim]
-  grid::Array{LinkedList{Int}, dim} = cllCreateEmptyGrid(cllCubeCount(maxs, mins, EPS))
+  grid::Array{LinkedList{Int}, dim} = cll_initgrid(cll_cubecount(maxs, mins, EPS))
 
   @inbounds for i in 1:cnt
     cur = data[:, i]
-    pos = cllIndex(mins, EPS, cur)
+    pos = cll_index(mins, EPS, cur)
     grid[pos...] = cons(i, grid[pos...])
   end
 
@@ -92,27 +107,29 @@ end
 """
 Adds a point to a CLL.
 """
-function cllAdd!(cll::CellLinkedList, pt::Point)
+function cll_add!(cll::CellLinkedList, pt::Point)
   size(pt, 1) != size(cll.data, 1) && throw(DimensionMismatch())
   nMax = max.(pt, cll.maxs)
   nMin = min.(pt, cll.mins)
   if nMax != cll.maxs || nMin != cll.mins
-    newGrid::Array{LinkedList{Int}, size(pt, 1)} = cllCreateEmptyGrid(cllCubeCount(nMax, nMin, cll.EPS))
-    cllRecreateGrid!(cll, newGrid)
+    newGrid::Array{LinkedList{Int}, size(pt, 1)} = cll_initgrid(cll_cubecount(nMax, nMin, cll.EPS))
+    cll_initgrid!(cll, newGrid)
     cll.grid = newGrid
     cll.maxs = nMax
     cll.mins = nMin
   end
-  pos = cllIndex(cll, pt)
+  pos = cll_index(cll, pt)
   cll.data = hcat(cll.data, pt)
   cll.grid[pos...] = cons(size(cll.data, 2), cll.grid[pos...])
   return nothing
 end
 
+cllAdd(a...) = warn("This function is deprecated, use `cll_add` instead.")
+
 """
 Removes a point from the its cell.  It remains in `data`.
 """
-function cllRemoveIdx(cll::CellLinkedList, idx::Integer, pos)
+function cll_removeindex!(cll::CellLinkedList, idx::Integer, pos)
   h = cll.grid[pos...]
   toDel = tail(h)
   if head(h) == idx
@@ -131,54 +148,60 @@ function cllRemoveIdx(cll::CellLinkedList, idx::Integer, pos)
   return nothing
 end
 
+cllRemoveIdx = warn("This function is deprecated, use `cll_removeindex!` instead.")
+
 """
 Only removes it from the linked list, because array deletions are expensive.
 Maybe add a deletion counter and perform a deletion when `counter > sqrt(length(data))`
 """
-function cllRemove!(cll::CellLinkedList, idx::Integer)
+function cll_remove!(cll::CellLinkedList, idx::Integer)
   if idx < 1 || idx > size(data, 2)
     throw(BoundsError(cll.data, idx))
   end
 
   pos = cll.index(data[:, idx])
-  cllRemoveIdx(cll, idx, pos)
+  cll_removeindex!(cll, idx, pos)
   return nothing
 end
+
+cllRemove = warn("This function is deprecated, use `cll_remove!` instead")
 
 """
 Changes `idx`th data to new coordinates.
 """
-function cllModify!(cll::CellLinkedList, idx::Integer, newPt::Point)
-  oldPos = cllIndex(cll, cll.data[:, idx])
-  newPos = cllIndex(cll, newPt)
+function cll_modify!(cll::CellLinkedList, idx::Integer, newPt::Point)
+  oldPos = cll_index(cll, cll.data[:, idx])
+  newPos = cll_index(cll, newPt)
   if oldPos == newPos
     return nothing
   end
-  cllRemoveIdx(cll, idx, oldPos)
+  cll_removeindex!(cll, idx, oldPos)
 
   nMax = max.(newPt, cll.maxs)
   nMin = min.(newPt, cll.mins)
   if nMax != cll.maxs || nMin != cll.mins
     newGrid::Array{LinkedList{Int}, size(newPt, 1)} =
-      cllCreateEmptyGrid(cllCubeCount(nMax, nMin, cll.EPS))
-    cllRecreateGrid!(cll, newGrid)
+      cll_initgrid(cll_cubecount(nMax, nMin, cll.EPS))
+    cll_initgrid!(cll, newGrid)
     cll.grid = newGrid
     cll.maxs = nMax
     cll.mins = nMin
-    newPos = cllIndex(cll, newPt)
+    newPos = cll_index(cll, newPt)
   end
   
   cll.grid[newPos...] = cons(idx, cll.grid[newPos...])
   return nothing
 end
 
+cllModify(a...) = warn("This function is deprecated, use `cll_modify` instead.")
+
 """
-Precalculates the cells, which need to be checked in cllInrange.
+Precalculates the cells, which need to be checked in cll_inrange.
 
 ### Example
 `cllNeighborCells(e::Real, d::Real)`
 """
-function cllNeighborCells(edge::Real, dist::Real, dim::Integer)
+function cll_neighbor_cells(edge::Real, dist::Real, dim::Integer)
   dim < 1 && error("dimension has to be at least 1, but it was $dim")
   (dist < 0 || dist < 1e-9) && error("distance has to be positive, but it was $dist")
   (edge < 0 || edge < 1e-9) && error("edge length has to be positive, but it was $edge")
@@ -196,20 +219,22 @@ function cllNeighborCells(edge::Real, dist::Real, dim::Integer)
   return res
 end
 
+cllNeighborCells = warn("This function is deprecated, use `cll_neighbor_cells` instead.")
+
 """
 Obtains the indices of `cll.data` of points, that are within `d` from `pt`.
 """
-function cllInrange(cll::CellLinkedList, pt::Point, d::Real = cll.EPS)
+function cll_inrange(cll::CellLinkedList, pt::Point, d::Real = cll.EPS)
   if Int(ceil(d / cll.EPS)) == Int(ceil(cll.prevQuery) / cll.EPS)
-    return cllInrange(cll, pt, cll.dirs, d)
+    return cll_inrange(cll, pt, cll.dirs, d)
   else
     neighbors = cllNeighborCells(cll.EPS, d, size(cll.mins, 1))
-    return cllInrange(cll, pt, neighbors, d)
+    return cll_inrange(cll, pt, neighbors, d)
   end
 end
 
-function cllInrange(cll::CellLinkedList, pt::Point, neighborCellDirs, d::Real = cll.EPS)
-  ptCell = cllIndex(cll, pt)
+function cll_inrange(cll::CellLinkedList, pt::Point, neighborCellDirs, d::Real = cll.EPS)
+  ptCell = cll_index(cll, pt)
   res::Vector{Int} = []
   for c in neighborCellDirs
     cur = ptCell + c
@@ -227,3 +252,5 @@ function cllInrange(cll::CellLinkedList, pt::Point, neighborCellDirs, d::Real = 
   end
   return res
 end
+
+cllInrange = warn("This function is deprecated, use `cll_inrange` instead.")

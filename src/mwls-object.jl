@@ -8,7 +8,7 @@ abstract type MwlsObject end
 - `weightFunc::Function`: weighting function θ of the method.
 
 # Automatically created member variables
-If created by the `mwlsNaive` function, the member variables in this section are created automatically.
+If created by the `mwls_naive` function, the member variables in this section are created automatically.
 
 - `vars::Vector{PolyVar{true}}`: variables of the polynomial,
 - `b::Vector{Monomial{true}}`: the basis of the polynomial,
@@ -33,11 +33,11 @@ end
 """
 Documentation is left out on purpose to discourage the use of MwlsNaiveObject.
 K-d trees are always faster and cell linked lists are faster on datasets larger than 20.
-`mwlsNaive` has the same signature as `mwlsCll`.
+`mwls_naive` has the same signature as `mwls_cll`.
 """
-function mwlsNaive(inputs::Array{T, N}, outputs::Array{U, M},
-                   EPS::Real, weightFunc::Function;
-                   maxDegree::Integer = 2) where {T <: Real, U <: Real, N, M}
+function mwls_naive(inputs::Array{T, N}, outputs::Array{U, M},
+                    EPS::Real, weightFunc::Function;
+                    maxDegree::Integer = 2) where {T <: Real, U <: Real, N, M}
   size(outputs, 1) != size(inputs, 1) &&
     error("The amount of inputs and outputs differs")
 
@@ -50,18 +50,20 @@ end
 """
 Documentation is left out on purpose to discourage the use of MwlsNaiveObject.
 K-d trees are always faster and cell linked lists are faster on datasets larger than 20.
-`mwlsNaive` has the same signature as `mwlsCll`.
+`mwls_naive` has the same signature as `mwls_cll`.
 """
-function mwlsNaive(input::Array{T, 2}, EPS::Real, weightFunc::Function;
-                   outputDim::Integer = 1, maxDegree::Integer = 2) where {T <: Real}
+function mwls_naive(input::Array{T, 2}, EPS::Real, weightFunc::Function;
+                    outputDim::Integer = 1, maxDegree::Integer = 2) where {T <: Real}
   width = size(input, 2)
   inputEnd = width - outputDim
   outputStart = inputEnd + 1
-  return mwlsNaive(input[:, inputEnd == 1 ? 1 : 1:inputEnd],
-                   input[:, outputStart == width ? width : outputStart:width],
-                   EPS, weightFunc,
-                   maxDegree = maxDegree)
+  return mwls_naive(input[:, inputEnd == 1 ? 1 : 1:inputEnd],
+                    input[:, outputStart == width ? width : outputStart:width],
+                    EPS, weightFunc,
+                    maxDegree = maxDegree)
 end
+
+mwlsNaive(a...;b...) = warn("This function name is deprecated, use `mwls_naive` instead.")
 
 """
 # User provided member variables
@@ -71,7 +73,7 @@ end
 - `weightFunc::Function`: weighting function θ of the method.
 
 # Automatically created member variables
-If created by the `mwlsCll` function, the member variables in this section are created automatically.
+If created by the `mwls_cll` function, the member variables in this section are created automatically.
 
 - `vars::Vector{PolyVar{true}}`: variables of the polynomial,
 - `b::Vector{Monomial{true}}`: the basis of the polynomial,
@@ -99,8 +101,8 @@ function MwlsKdObject(inputs, outputs, EPS, weightFunc, vars, b;
 end
 
 """
-    mwlsKd(inputs::Array{T, N}, outputs::Array{U}, EPS::Real, weightFunc::Function) where {T <: Real, U <: Real, N}
-    mwlsKd(inputs::Array{T, N}, outputs::Array{U}, EPS::Real, weightFunc::Function; leafsize::Int = 10, maxDegree::Int = 2) where {T <: Real, U <: Real, N}
+    mwls_kd(inputs::Array{T, N}, outputs::Array{U}, EPS::Real, weightFunc::Function) where {T <: Real, U <: Real, N}
+    mwls_kd(inputs::Array{T, N}, outputs::Array{U}, EPS::Real, weightFunc::Function; leafsize::Int = 10, maxDegree::Int = 2) where {T <: Real, U <: Real, N}
 
 Creates `MwlsKdObject` from sample input and sample output data, the cutoff distance ε and a weighting function θ.
 
@@ -114,9 +116,9 @@ Creates `MwlsKdObject` from sample input and sample output data, the cutoff dist
 - `leafSize::Int`: the size of the leaves in the k-d-tree, 10 by default.
 - `maxDegree::Int`: the maximal degree of polynomials used for approximation, 2 by default.
 """
-function mwlsKd(inputs::Array{T, N}, outputs::Array{U},
-                EPS::Real, weightFunc::Function;
-                leafSize::Integer = 10, maxDegree::Integer = 2) where {T <: Real, U <: Real, N}
+function mwls_kd(inputs::Array{T, N}, outputs::Array{U},
+                 EPS::Real, weightFunc::Function;
+                 leafSize::Integer = 10, maxDegree::Integer = 2) where {T <: Real, U <: Real, N}
   size(outputs, 1) != size(inputs, 1) &&
     error("The amount of inputs and outputs differs.")
 
@@ -128,23 +130,25 @@ function mwlsKd(inputs::Array{T, N}, outputs::Array{U},
 end
 
 """
-    mwlsKd(input::Array{T, 2}, EPS::Real, weightFunc::Function) where {T <: Real}
-    mwlsKd(input::Array{T, 2}, EPS::Real, weightFunc::Function; outputDim::Int = 1, leafSize::Int = 10, maxDegree::Int = 2) where {T <: Real}
+    mwls_kd(input::Array{T, 2}, EPS::Real, weightFunc::Function) where {T <: Real}
+    mwls_kd(input::Array{T, 2}, EPS::Real, weightFunc::Function; outputDim::Int = 1, leafSize::Int = 10, maxDegree::Int = 2) where {T <: Real}
 
-In this `mwlsKd` function, the sample input and sample output data are passed in a single array.
+In this `mwls_kd` function, the sample input and sample output data are passed in a single array.
 It is assumed that each pair of input and output is on a single row.
 Dimension of the output is specified with kwarg `outputDim`.
 """
-function mwlsKd(input::Array{T, 2}, EPS::Real, weightFunc::Function;
+function mwls_kd(input::Array{T, 2}, EPS::Real, weightFunc::Function;
                 outputDim::Integer = 1, leafSize::Integer = 10, maxDegree::Int = 2) where {T <: Real}
   width = size(input, 2)
   inputEnd = width - outputDim
   outputStart = inputEnd + 1
-  return mwlsKd(input[:, inputEnd == 1 ? 1 : 1:inputEnd],
-                input[:, outputStart == width ? width : outputStart:width],
-                EPS, weightFunc,
-                leafSize = leafSize, maxDegree = maxDegree)
+  return mwls_kd(input[:, inputEnd == 1 ? 1 : 1:inputEnd],
+                 input[:, outputStart == width ? width : outputStart:width],
+                 EPS, weightFunc,
+                 leafSize = leafSize, maxDegree = maxDegree)
 end
+
+mwlsKd(a...;b...) = warn("This function is deprecated, use `mwls_kd` instead.")
 
 """
 # User provided member variables
@@ -154,7 +158,7 @@ end
 - `weightFunc::Function`: weighting function θ of the method.
 
 # Automatically created member variables
-If created by the `mwlsCll` function, the member variables in this section are created automatically.
+If created by the `mwls_cll` function, the member variables in this section are created automatically.
 
 - `vars::Vector{PolyVar{true}}`: variables of the polynomial,
 - `b::Vector{Monomial{true}}`: the basis of the polynomial,
@@ -181,8 +185,8 @@ function MwlsCllObject(inputs, outputs, EPS, weightFunc, vars, b)
 end
 
 """
-    mwlsCll(inputs::Array{T, N}, outputs::Array{U}, EPS::Real, weightFunc::Function) where {T <: Real, U <: Real, N}
-    mwlsCll(inputs::Array{T, N}, outputs::Array{U}, EPS::Real, weightFunc::Function; maxDegree::Int = 2) where {T <: Real, U <: Real, N}
+    mwls_cll(inputs::Array{T, N}, outputs::Array{U}, EPS::Real, weightFunc::Function) where {T <: Real, U <: Real, N}
+    mwls_cll(inputs::Array{T, N}, outputs::Array{U}, EPS::Real, weightFunc::Function; maxDegree::Int = 2) where {T <: Real, U <: Real, N}
 
 Creates `MwlsCllObject` from sample input and sample output data, the cutoff distance ε and a weighting function θ.
 
@@ -195,9 +199,9 @@ Creates `MwlsCllObject` from sample input and sample output data, the cutoff dis
 # Keyword arguments
 - `maxDegree::Int`: the maximal degree of polynomials used for approximation, 2 by default.
 """
-function mwlsCll(inputs::Array{T, N}, outputs::Array{U},
-                 EPS::Real, weightFunc::Function;
-                 maxDegree::Integer = 2) where {T <: Real, U <: Real, N}
+function mwls_cll(inputs::Array{T, N}, outputs::Array{U},
+                  EPS::Real, weightFunc::Function;
+                  maxDegree::Integer = 2) where {T <: Real, U <: Real, N}
   size(outputs, 1) != size(inputs, 1) &&
     error("The amount of inputs and outputs differs.")
 
@@ -209,19 +213,21 @@ function mwlsCll(inputs::Array{T, N}, outputs::Array{U},
 end
 
 """
-    mwlsCll(input::Array{T, 2}, EPS::Real, weightFunc::Function) where {T <: Real}
-    mwlsCll(input::Array{T, 2}, EPS::Real, weightFunc::Function; outputDim::Int = 1, maxDegree::Int = 2) where {T <: Real}
+    mwls_cll(input::Array{T, 2}, EPS::Real, weightFunc::Function) where {T <: Real}
+    mwls_cll(input::Array{T, 2}, EPS::Real, weightFunc::Function; outputDim::Int = 1, maxDegree::Int = 2) where {T <: Real}
 
-In this `mwlsCll` function, the sample input and sample output data are passed in a single array.
+In this `mwls_cll` function, the sample input and sample output data are passed in a single array.
 It is assumed that each pair of input and output is on a single row.
 Dimension of the output is specified with kwarg `outputDim`.
 """
-function mwlsCll(input::Array{T, 2}, EPS::Real, weightFunc::Function;
-                 outputDim::Integer = 1, maxDegree::Integer = 2) where {T <: Real}
+function mwls_cll(input::Array{T, 2}, EPS::Real, weightFunc::Function;
+                  outputDim::Integer = 1, maxDegree::Integer = 2) where {T <: Real}
   width = size(input, 2)
   inputEnd = width - outputDim
   outputStart = inputEnd + 1
-  return mwlsCll(input[:, inputEnd == 1 ? 1 : 1:inputEnd],
-                 input[:, outputStart == width ? width : outputStart:width],
-                 EPS, weightFunc, maxDegree = maxDegree)
+  return mwls_cll(input[:, inputEnd == 1 ? 1 : 1:inputEnd],
+                  input[:, outputStart == width ? width : outputStart:width],
+                  EPS, weightFunc, maxDegree = maxDegree)
 end
+
+mwlsCll(a...;b...) = warn("This function is deprecated, use `mwls_cll` instead.")
