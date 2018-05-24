@@ -21,7 +21,7 @@ function inrange_data(obj::MwlsCllObject, pt::Point, dist::Real = obj.EPS)
   return cll_inrange(obj.cll, pt, dist)
 end
 
-getInrangeData(a...;b...) = warn("This function is deprecated, use` inrange_data` instead.")
+getInrangeData(a...;b...) = warn("`getInrangeData` is deprecated, use` inrange_data` instead.")
 
 """
     mwls_coefficients(obj::MwlsObject, pt::Point, dist::Real)
@@ -61,7 +61,7 @@ function mwls_coefficients(obj::MwlsObject, pt::Point, dist::Real = obj.EPS)
   return result
 end
 
-calcMwlsCoefficients(a...;b...) = warn("This function is deprecated, use `mwls_coefficients` instead.")
+calcMwlsCoefficients(a...;b...) = warn("`calcMwlsCoefficients` is deprecated, use `mwls_coefficients` instead.")
 
 # does the actual approximation
 """
@@ -120,7 +120,7 @@ function mwls_diff_polys(obj::MwlsObject, inPt::Point, dirs::NTuple{N, Integer};
   return poly
 end
 
-calcDiffMwlsPolys(a...;b...) = warn("This function is deprecated, use `mwls_diff_polys` instead")
+calcDiffMwlsPolys(a...;b...) = warn("`calcDiffMwlsPolys` is deprecated, use `mwls_diff_polys` instead")
 
 """
     mwls_diff(obj::MwlsNaiveObject, inPt::Real, dirs::Integer; dist::Real = obj.EPS)
@@ -176,4 +176,4 @@ function mwls_diff(obj::MwlsObject, inPt::Point, dirs::NTuple{N, Integer}; dist:
   return length(res) == 1 ? res[1] : res
 end
 
-mwlsDiff(a...;b...) = warn("This function is deprecated, use `mwls_diff` instead")
+mwlsDiff(a...;b...) = warn("`mwlsDiff` is deprecated, use `mwls_diff` instead")

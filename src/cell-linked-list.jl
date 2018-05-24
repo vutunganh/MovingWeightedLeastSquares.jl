@@ -1,14 +1,13 @@
 """
 Cell linked list splits the vector space a regular grid with edge length `EPS`.
 
-
-# Attributes
+# Member variables
 - `data::Array{T, 2} where {T <: Real}`: an array holding the original data
 - `grid::Array{LinkedList{T}} where {T <: Int}`: the gridded space
 - `EPS::Real`: the edge length of each grid cube
 - `maxs::Vector{T} where {T <: Real}`: stores the maximal coordinate over all data
 - `mins::Vector{T} where {T <: Real}`: stores the minimal coordinate over all data
-- `prevQuery::Real`: skip `cllNeighborCells` in `cll_inrange` if `Int(ceil(dist / edge)) == Int(ceil(prevQuery / edge))`
+- `prevQuery::Real`: skip `cll_neighbor_cells` in `cll_inrange` if `Int(ceil(dist / edge)) == Int(ceil(prevQuery / edge))`
 - `dirs::Vector{T}`: cached vector of neighbor cells
 """
 struct CellLinkedList
@@ -22,17 +21,16 @@ struct CellLinkedList
 end
 
 """
-Calculates the amount of cubes in the grid.
-A cell linked list with the resulting amount of cubes will be able to hold any vector `v` where `v .<= maxs` and `v .>= mins`.
+Calculates the amount of cells in the grid.
+A cell linked list with the resulting amount of cells will be able to hold any vector `v` where `v .<= maxs` and `v .>= mins`.
 """
 function cll_cubecount(maxs::Vector{T}, mins::Vector{T}, EPS::Real) where {T <: Real}
   size(maxs, 1) != size(mins, 1) && throw(DimensionMismatch())
   return [Int(floor(maxs[i] / EPS) - floor(mins[i] / EPS)) for i in 1:size(maxs, 1)] + 1
 end
 
-function cllCubeCount(a...)
-  warn("This function is deprecated, use `cll_cubecount` instead.")
-end
+cllCubeCount(a...;b...) = warn("`cllCubeCount` is deprecated, use `cll_cubecount` instead.")
+
 """
 Creates a grid of empty linked lists.
 """
@@ -40,9 +38,7 @@ function cll_initgrid(cubes::Vector{T}) where {T <: Integer}
   return fill(nil(T), Tuple(cubes))
 end
 
-function cllCreateEmptyGrid(a...)
-  warn("This function is deprecated, use `cll_initgrid` instead.")
-end
+cllCreateEmptyGrid(a...) = warn("`cllCreateEmptyGrid` is deprecated, use `cll_initgrid` instead.")
 
 """
 Finds point's index in the grid of `cll`.
@@ -51,9 +47,7 @@ function cll_index(cll::CellLinkedList, pt::Point)
   return cll_index(cll.mins, cll.EPS, pt)
 end
 
-function cllIndex(a...)
-  warn("This function is deprecated, use `cll_index` instead.")
-end
+cllIndex(a...) = warn("`cllIndex` is deprecated, use `cll_index` instead.")
 
 """
 Finds point's index in the grid given by `mins` and `EPS`.
@@ -67,7 +61,7 @@ Some operations on the CLL might increase the size of the gridded space.
 Instead of recreating a new CLL, we reuse the already created lists assuming that `EPS` hasn't changed.
 """
 function cll_initgrid!(cll::CellLinkedList,
-                          newGrid::Array{LinkedList{T}}) where {T <: Integer}
+                       newGrid::Array{LinkedList{T}}) where {T <: Integer}
   for l in cll.grid
     l == nil() && continue
 
@@ -77,9 +71,7 @@ function cll_initgrid!(cll::CellLinkedList,
   return nothing
 end
 
-function cllCreateEmptyGrid!(a...)
-  warn("This function is deprecated, use `cll_initgrid` instead.")
-end
+cllCreateEmptyGrid!(a...) = warn("`cllCreateEmptyGrid` is deprecated, use `cll_initgrid` instead.")
 
 """
 Each point is in a single column.
@@ -124,7 +116,7 @@ function cll_add!(cll::CellLinkedList, pt::Point)
   return nothing
 end
 
-cllAdd(a...) = warn("This function is deprecated, use `cll_add` instead.")
+cllAdd!(a...) = warn("`cllAdd!` is deprecated, use `cll_add` instead.")
 
 """
 Removes a point from the its cell.  It remains in `data`.
@@ -148,7 +140,7 @@ function cll_removeindex!(cll::CellLinkedList, idx::Integer, pos)
   return nothing
 end
 
-cllRemoveIdx = warn("This function is deprecated, use `cll_removeindex!` instead.")
+cllRemoveIdx! = warn("`cllRemoveIdx!` is deprecated, use `cll_removeindex!` instead.")
 
 """
 Only removes it from the linked list, because array deletions are expensive.
@@ -164,7 +156,7 @@ function cll_remove!(cll::CellLinkedList, idx::Integer)
   return nothing
 end
 
-cllRemove = warn("This function is deprecated, use `cll_remove!` instead")
+cllRemove! = warn("`cllRemove!` is deprecated, use `cll_remove!` instead")
 
 """
 Changes `idx`th data to new coordinates.
@@ -193,13 +185,13 @@ function cll_modify!(cll::CellLinkedList, idx::Integer, newPt::Point)
   return nothing
 end
 
-cllModify(a...) = warn("This function is deprecated, use `cll_modify` instead.")
+cllModify!(a...) = warn("`cllModify!` is deprecated, use `cll_modify!` instead.")
 
 """
 Precalculates the cells, which need to be checked in cll_inrange.
 
 ### Example
-`cllNeighborCells(e::Real, d::Real)`
+`cll_neighbor_cells(e::Real, d::Real)`
 """
 function cll_neighbor_cells(edge::Real, dist::Real, dim::Integer)
   dim < 1 && error("dimension has to be at least 1, but it was $dim")
@@ -219,7 +211,7 @@ function cll_neighbor_cells(edge::Real, dist::Real, dim::Integer)
   return res
 end
 
-cllNeighborCells = warn("This function is deprecated, use `cll_neighbor_cells` instead.")
+cllNeighborCells = warn("`cllNeighborCells` is deprecated, use `cll_neighbor_cells` instead.")
 
 """
 Obtains the indices of `cll.data` of points, that are within `d` from `pt`.
@@ -229,6 +221,7 @@ function cll_inrange(cll::CellLinkedList, pt::Point, d::Real = cll.EPS)
     return cll_inrange(cll, pt, cll.dirs, d)
   else
     neighbors = cll_neighbor_cells(cll.EPS, d, size(cll.mins, 1))
+    #TODO: cache prev query
     return cll_inrange(cll, pt, neighbors, d)
   end
 end
@@ -253,4 +246,4 @@ function cll_inrange(cll::CellLinkedList, pt::Point, neighbor_dirs, d::Real = cl
   return res
 end
 
-cllInrange = warn("This function is deprecated, use `cll_inrange` instead.")
+cllInrange = warn("`cllInrange` is deprecated, use `cll_inrange` instead.")

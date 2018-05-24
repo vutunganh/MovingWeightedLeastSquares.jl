@@ -1,5 +1,5 @@
 """
-    generate(dim::Integer, maxdegree:Integer)
+    genmonomials(dim::Integer, maxdegree:Integer)
 
 Generates an array of monomials.
 
@@ -9,7 +9,7 @@ Generates an array of monomials.
 
 Returns the monomial variables and the monomials themselves.
 """
-function generateMonomials(dim::Integer, maxdegree::Integer)
+function genmonomials(dim::Integer, maxdegree::Integer)
   vars = @polyvar x[1:dim]
   if dim < 0 || maxdegree < 0
     error("Cannot generate a polynomial with negative dimensions")

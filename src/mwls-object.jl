@@ -42,7 +42,7 @@ function mwls_naive(inputs::Array{T, N}, outputs::Array{U, M},
     error("The amount of inputs and outputs differs")
 
   vars::Vector{PolyVar{true}}, b :: Vector{Monomial{true}} =
-    generateMonomials(size(inputs, 2), maxDegree)
+    genmonomials(size(inputs, 2), maxDegree)
 
   return MwlsNaiveObject(inputs, outputs, EPS, weightFunc, vars, b)
 end
@@ -63,7 +63,7 @@ function mwls_naive(input::Array{T, 2}, EPS::Real, weightFunc::Function;
                     maxDegree = maxDegree)
 end
 
-mwlsNaive(a...;b...) = warn("This function name is deprecated, use `mwls_naive` instead.")
+mwlsNaive(a...;b...) = warn("`mwlsNaive` is deprecated, use `mwls_naive` instead.")
 
 """
 # User provided member variables
@@ -123,7 +123,7 @@ function mwls_kd(inputs::Array{T, N}, outputs::Array{U},
     error("The amount of inputs and outputs differs.")
 
   vars::Vector{PolyVar{true}}, b::Vector{Monomial{true}} =
-    generateMonomials(size(inputs, 2), maxDegree)
+    genmonomials(size(inputs, 2), maxDegree)
   return MwlsKdObject(N == 1 ? hcat(inputs, zeros(size(inputs, 1))) : inputs,
                       outputs, EPS, weightFunc,
                       vars, b, leafSize = leafSize)
@@ -148,7 +148,7 @@ function mwls_kd(input::Array{T, 2}, EPS::Real, weightFunc::Function;
                  leafSize = leafSize, maxDegree = maxDegree)
 end
 
-mwlsKd(a...;b...) = warn("This function is deprecated, use `mwls_kd` instead.")
+mwlsKd(a...;b...) = warn("`mwlsKd` is deprecated, use `mwls_kd` instead.")
 
 """
 # User provided member variables
@@ -206,7 +206,7 @@ function mwls_cll(inputs::Array{T, N}, outputs::Array{U},
     error("The amount of inputs and outputs differs.")
 
   vars::Vector{PolyVar{true}}, b::Vector{Monomial{true}} =
-    generateMonomials(size(inputs, 2), maxDegree)
+    genmonomials(size(inputs, 2), maxDegree)
 
   return MwlsCllObject(N == 1 ? hcat(inputs, zeros(size(inputs,1))) : inputs,
                        outputs, EPS, weightFunc, vars, b)
@@ -230,4 +230,4 @@ function mwls_cll(input::Array{T, 2}, EPS::Real, weightFunc::Function;
                   EPS, weightFunc, maxDegree = maxDegree)
 end
 
-mwlsCll(a...;b...) = warn("This function is deprecated, use `mwls_cll` instead.")
+mwlsCll(a...;b...) = warn("`mwlsCll` is deprecated, use `mwls_cll` instead.")
