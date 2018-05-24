@@ -228,15 +228,15 @@ function cll_inrange(cll::CellLinkedList, pt::Point, d::Real = cll.EPS)
   if Int(ceil(d / cll.EPS)) == Int(ceil(cll.prevQuery) / cll.EPS)
     return cll_inrange(cll, pt, cll.dirs, d)
   else
-    neighbors = cllNeighborCells(cll.EPS, d, size(cll.mins, 1))
+    neighbors = cll_neighbor_cells(cll.EPS, d, size(cll.mins, 1))
     return cll_inrange(cll, pt, neighbors, d)
   end
 end
 
-function cll_inrange(cll::CellLinkedList, pt::Point, neighborCellDirs, d::Real = cll.EPS)
+function cll_inrange(cll::CellLinkedList, pt::Point, neighbor_dirs, d::Real = cll.EPS)
   ptCell = cll_index(cll, pt)
   res::Vector{Int} = []
-  for c in neighborCellDirs
+  for c in neighbor_dirs
     cur = ptCell + c
     if any(cur .< 1)
       continue
