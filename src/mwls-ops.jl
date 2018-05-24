@@ -69,7 +69,7 @@ calcMwlsCoefficients(a...;b...) = warn("This function is deprecated, use `mwls_c
     approximate(obj::MwlsObject, pt::Point; dist::Real = obj.EPS)
 
 This calculates the approximated value at `pt` for each dimension of output data.
-The actual value is returned.
+The approximated value is returned.
 """
 function approximate(obj::MwlsObject, pt::Point, dist::Real = obj.EPS)
   cs = mwls_coefficients(obj, pt, dist)

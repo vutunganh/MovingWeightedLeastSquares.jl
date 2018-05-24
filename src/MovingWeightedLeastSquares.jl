@@ -16,7 +16,7 @@ export CellLinkedList, cllAdd!, cll_add!, cllRemove!, cll_remove!, cllModify!, c
 include("cell-linked-list.jl")
 export MwlsObject, mwlsNaive, mwls_naive, mwlsKd, mwls_kd, mwlsCll, mwls_cll
 include("mwls-object.jl")
-export calcMwlsCoefficients, calc_mwls_coefficients,
+export calcMwlsCoefficients, mwls_coefficients,
        approximate, calcDiffMwlsPolys,
        mwls_diff_polys, mwlsDiff, mwls_diff
 include("mwls-ops.jl")
