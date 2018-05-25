@@ -1,3 +1,4 @@
+# wls object is not actively maintained
 """
 # User provided attributes
 - `inputs`: the vector or array view of input points

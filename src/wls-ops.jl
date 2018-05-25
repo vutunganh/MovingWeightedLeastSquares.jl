@@ -1,3 +1,5 @@
+# wls object is not actively maintained
+
 function calcWlsCoefficients(obj::WlsObject, inPt::Point)
   m = length(obj.b)
   datalen = size(obj.inputs, 1)

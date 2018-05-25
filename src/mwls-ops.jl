@@ -42,7 +42,7 @@ function mwls_coefficients(obj::MwlsObject, pt::Point, dist::Real = obj.EPS)
 
   for p in data
     curPt = obj.inputs[:, p]
-    w = obj.weightFunc(norm(pt - curPt), obj.EPS)
+    w = obj.weightfunc(norm(pt - curPt), obj.EPS)
     @inbounds for j in 1:m
       @inbounds for i in 1:m
         firstTerm[i, j] += w * obj.matrix[i, j](obj.vars => curPt)
