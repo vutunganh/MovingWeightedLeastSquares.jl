@@ -3,7 +3,7 @@
 ## Overview
 
 MovingWeightedLeastSquares.jl is a package that provides an implementation of the moving weighted least squares method.
-A (very) nice short description of this method by Andy Nealen can be found [here](http://nealen.de/projects/mls/asapmls.pdf).
+A short description of this method by Andy Nealen can be found [here](http://nealen.de/projects/mls/asapmls.pdf).
 
 Let ``\theta(d): \mathbb{R}^+ \rightarrow \mathbb{R}^+`` be a weighting function of the method.
 Very often the there will be an ``\varepsilon \in \mathbb{R}``, such that ``\forall \delta > \varepsilon: \theta(\delta) = 0``.
@@ -18,7 +18,6 @@ This interface is similar to the interface of "interpolations objects" from [Int
 The difference between the subclasses is the solution of the range search problem.
 `MwlsKdObject` solves the range search problem by using a k-d tree created by Kristoffer Carlsson, see [NearestNeighbors.jl](https://github.com/KristofferC/NearestNeighbors.jl).
 `MwlsCllObject` solves the range search problem by using a cell linked list, which is implemented in this package.
-If the cell linked list is needed 
 `MwlsNaiveObject` solves the range search problem naively.
 
 **TL;DR**: use anything but `MwlsNaiveObject`.
@@ -30,3 +29,5 @@ At the moment this package can be installed by manually cloning the package
 ```
 Pkg.clone("https://github.com/vutunganh/MovingWeightedLeastSquares.jl")
 ```
+
+The package has been merged to Julia's `METADATA`, but I haven't tried installing it that way (using `Pkg.add`) yet.

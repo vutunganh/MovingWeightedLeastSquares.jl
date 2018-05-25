@@ -18,7 +18,7 @@ Now let's construct an approximation object `obj`.
 Let's choose a weighting function ``\theta(d) = \exp(d^2)``.
 
 ```@example approx
-obj = mwlsKd(xs, fs, 0.5, (d, e) -> (exp(-d^2)));
+obj = mwls_kd(xs, fs, 0.5, (d, e) -> (exp(-d^2)));
 ```
 
 The approximation at 1 can be obtained by using
@@ -37,7 +37,7 @@ obj(1, 1)
 
 ```@docs
 approximate
-calcMwlsCoefficients
+mwls_coefficients
 ```
 
 # Approximation of derivative
@@ -47,7 +47,7 @@ calcMwlsCoefficients
 Approximation of first derivative on the dataset from the previous example can be done by using
 
 ```@example approx
-mwlsDiff(obj, 1, 1)
+mwls_diff(obj, 1, 1)
 ```
 
 Formally a tuple is required for specifying the orders of derivates for each variable.
@@ -59,7 +59,7 @@ Let ``f`` be the approximated function. For an example a tuple `(1, 2)` calculat
 ## Relevant documentation
 
 ```@docs
-mwlsDiff
-calcDiffMwlsPolys
+mwls_diff
+mwls_diff_polys
 ```
 
