@@ -140,7 +140,7 @@ function cll_removeindex!(cll::CellLinkedList, idx::Integer, pos)
   return nothing
 end
 
-cllRemoveIdx! = warn("`cllRemoveIdx!` is deprecated, use `cll_removeindex!` instead.")
+cllRemoveIdx!(a...) = warn("`cllRemoveIdx!` is deprecated, use `cll_removeindex!` instead.")
 
 """
 Only removes it from the linked list, because array deletions are expensive.
@@ -156,7 +156,7 @@ function cll_remove!(cll::CellLinkedList, idx::Integer)
   return nothing
 end
 
-cllRemove! = warn("`cllRemove!` is deprecated, use `cll_remove!` instead")
+cllRemove!(a...) = warn("`cllRemove!` is deprecated, use `cll_remove!` instead")
 
 """
 Changes `idx`th data to new coordinates.
@@ -211,7 +211,7 @@ function cll_neighbor_cells(edge::Real, dist::Real, dim::Integer)
   return res
 end
 
-cllNeighborCells = warn("`cllNeighborCells` is deprecated, use `cll_neighbor_cells` instead.")
+cllNeighborCells(a...) = warn("`cllNeighborCells` is deprecated, use `cll_neighbor_cells` instead.")
 
 """
 Obtains the indices of `cll.data` of points, that are within `d` from `pt`.
@@ -246,4 +246,4 @@ function cll_inrange(cll::CellLinkedList, pt::Point, neighbor_dirs, d::Real = cl
   return res
 end
 
-cllInrange = warn("`cllInrange` is deprecated, use `cll_inrange` instead.")
+cllInrange(a...) = warn("`cllInrange` is deprecated, use `cll_inrange` instead.")
